@@ -75,8 +75,8 @@ public class SQLCubeLoader {
 						rs.getString("subtypes"),
 						rs.getString("text"),
 						rs.getString("flavor"),
-						rs.getInt("power"),
-						rs.getInt("toughness"));
+						rs.getString("power"),
+						rs.getString("toughness"));
 				cards.add(card);
 				count++;
 			}

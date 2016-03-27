@@ -40,17 +40,11 @@ public class Test2 {
 				+ "subtypes varchar(50),"
 				+ "text varchar (400),"
 				+ "flavor varchar (200),"
-				+ "power int,"
-				+ "toughness int);");
+				+ "power varchar (3),"
+				+ "toughness varchar (3));");
 		
-		ArrayList<String> cards = t.readCards("ALLCARDS.json");
-		ArrayList<String> sub = new ArrayList<String>();
-		Random r = new Random();
-		int num = 10;
-		for(int i = 0; i < num; i++){
-			sub.add(cards.get(r.nextInt(cards.size())));
-		}
-		t.commit((ArrayList<String>) sub, database);
+		ArrayList<String> cards = t.readCards("ALLCARDS.json");	
+		t.commit(cards, database);
 	}
 	
 	public ArrayList<String> readCards(String file){
@@ -69,7 +63,7 @@ public class Test2 {
 				if(c == '}'){
 					b--;
 					if(b ==  0){
-						output.add(s.substring(1));
+						output.add(s.substring(1).replaceAll("\\p{Pd}", "-"));
 						counter++;
 						s = "";
 					};
@@ -98,7 +92,8 @@ public class Test2 {
 	}
 	
 	public void commit(ArrayList<String> cards, Connection database) throws SQLException{
-		PreparedStatement prep = null;
+		PreparedStatement prep = database.prepareStatement("insert into cards values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+		database.setAutoCommit(false);
 		double time = System.currentTimeMillis();
 		for (String card : cards){
 			Card c = fromString(card);
@@ -114,24 +109,23 @@ public class Test2 {
 						colorA += s.substring(0, 1).toUpperCase();
 					}
 				}
-				
-				prep = database.prepareStatement("insert into cards values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 				prep.setString(1, c.name);
 				prep.setString(2, c.manaCost);
-				prep.setInt(3, c.cmc);
+				prep.setDouble(3, c.cmc);
 				prep.setString(4, (c.colors != null) ? colorA : "C");
 				prep.setString(5, String.join(" ", c.types));
 				prep.setString(6, (c.subtypes != null) ? String.join(" ", c.subtypes) : "");
 				prep.setString(7, c.text);
 				prep.setString(8, c.flavor);
-				prep.setInt(9, c.power);
-				prep.setInt(10, c.toughness);
+				prep.setString(9, c.power);
+				prep.setString(10, c.toughness);
 				prep.addBatch();
 				//System.out.println("Commit " + c.name + " finished with code " + prep.executeUpdate());
 				
 			}
 		}
 		prep.executeBatch();
+		database.commit();
 		System.out.println("Finished "+cards.size()+" cards in ("+ (System.currentTimeMillis() - time)/1000 +")");
 	}
 }

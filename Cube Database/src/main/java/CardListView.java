@@ -205,8 +205,8 @@ public class CardListView extends JPanel {
 						rs.getString("subtypes"),
 						rs.getString("text"),
 						rs.getString("flavor"),
-						rs.getInt("power"),
-						rs.getInt("toughness"));
+						rs.getString("power"),
+						rs.getString("toughness"));
 				cardSearchResults.add(card);
 			}
 			rs.close();
@@ -250,8 +250,8 @@ public class CardListView extends JPanel {
 						rs.getString("subtypes"),
 						rs.getString("text"),
 						rs.getString("flavor"),
-						rs.getInt("power"),
-						rs.getInt("toughness"));
+						rs.getString("power"),
+						rs.getString("toughness"));
 				cardSearchResults.add(card);
 			}
 			rs.close();
@@ -293,8 +293,8 @@ public class CardListView extends JPanel {
 						rs.getString("subtypes"),
 						rs.getString("text"),
 						rs.getString("flavor"),
-						rs.getInt("power"),
-						rs.getInt("toughness"));
+						rs.getString("power"),
+						rs.getString("toughness"));
 				cardSearchResults.add(card);
 			}
 			rs.close();
