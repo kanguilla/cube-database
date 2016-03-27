@@ -95,7 +95,7 @@ public class DeckView extends JFrame{
 				prep.setString(1, s);
 				rs = prep.executeQuery();
 				Card card = new Card(rs.getString("name"), rs.getString("cost"), rs.getString("color"),
-						rs.getString("typeline"), rs.getString("rarity"), rs.getInt("power"), rs.getInt("toughness"),
+						rs.getString("typeline"), rs.getString("rarity"), rs.getString("power"), rs.getString("toughness"),
 						rs.getString("mset"));
 				cards.add(card);
 			}

@@ -150,7 +150,7 @@ public class CardListView extends JPanel {
 		cardList.setFont(uif);
 		cardList.setBackground(Color.black);
 		cardList.setForeground(Color.white);
-		cardList.setPrototypeCellValue(new Card("*", "*", "*", "*", "*", 0, 0, "*"));
+		cardList.setPrototypeCellValue(new Card("", "", "", "", "", "", "", ""));
 		cardList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 				if (!event.getValueIsAdjusting()) {
@@ -198,7 +198,7 @@ public class CardListView extends JPanel {
 			ResultSet rs = prep.executeQuery();
 			while (rs.next()) {
 				Card card = new Card(rs.getString("name"), rs.getString("cost"), rs.getString("color"),
-						rs.getString("typeline"), rs.getString("rarity"), rs.getInt("power"), rs.getInt("toughness"),
+						rs.getString("typeline"), rs.getString("rarity"), rs.getString("power"), rs.getString("toughness"),
 						rs.getString("mset"));
 				cardSearchResults.add(card);
 			}
@@ -236,7 +236,7 @@ public class CardListView extends JPanel {
 			ResultSet rs = prep.executeQuery();
 			while (rs.next()) {
 				Card card = new Card(rs.getString("name"), rs.getString("cost"), rs.getString("color"),
-						rs.getString("typeline"), rs.getString("rarity"), rs.getInt("power"), rs.getInt("toughness"),
+						rs.getString("typeline"), rs.getString("rarity"), rs.getString("power"), rs.getString("toughness"),
 						rs.getString("mset"));
 				cardSearchResults.add(card);
 			}
@@ -272,7 +272,7 @@ public class CardListView extends JPanel {
 			ResultSet rs = prep.executeQuery();
 			while (rs.next()) {
 				Card card = new Card(rs.getString("name"), rs.getString("cost"), rs.getString("color"),
-						rs.getString("typeline"), rs.getString("rarity"), rs.getInt("power"), rs.getInt("toughness"),
+						rs.getString("typeline"), rs.getString("rarity"), rs.getString("power"), rs.getString("toughness"),
 						rs.getString("mset"));
 				cardSearchResults.add(card);
 			}

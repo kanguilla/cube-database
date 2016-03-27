@@ -442,8 +442,8 @@ public class MainView extends JFrame {
 						colorField.getText(), 
 						typeField.getText(), 
 						rarityField.getText(), 
-						power, 
-						toughness, 
+						powerField.getText(),
+						toughnessField.getText(),
 						setField.getText());
 				cards.add(newCard);
 				//Store it

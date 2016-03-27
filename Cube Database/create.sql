@@ -50,7 +50,7 @@ create table if not exists archetypeMembers(
 	  cardName varchar(50) references cards(name),
 	  archetypeName varchar(50) references archetypes(name)
 	  );  
-	  
+/*	  
 begin transaction;
 
 insert into cards(name, cost, typeline, color, power, toughness, rarity, mset) values ('Stromkirk Captain', '1BR', 'Creature Vampire Soldier', 'BR', 2, 2, 'U', 'ISD');
@@ -203,3 +203,4 @@ insert into deckLists(deckName, cardName, occurences) values ('Equipment', 'Blaz
 insert into deckLists(deckName, cardName, occurences) values ('Equipment', 'Herald of Kozilek', 2);
 
 end transaction;
+*/

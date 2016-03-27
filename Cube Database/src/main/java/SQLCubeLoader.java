@@ -73,8 +73,8 @@ public class SQLCubeLoader {
 						rs.getString("color"),
 						rs.getString("typeline"),
 						rs.getString("rarity"),
-						rs.getInt("power"),
-						rs.getInt("toughness"),
+						rs.getString("power"),
+						rs.getString("toughness"),
 						rs.getString("mset"));
 				cards.add(card);
 				count++;
