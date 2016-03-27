@@ -434,7 +434,7 @@ public class MainView extends JFrame {
 			Integer power = (toughnessField.getText().equals("") ? null : Integer.parseInt(toughnessField.getText()));
 			Integer toughness = (toughnessField.getText().equals("") ? null : Integer.parseInt(toughnessField.getText()));
 			try {
-				
+				/*
 				//Create the card
 				Card newCard = new Card(
 						nameField.getText(),
@@ -446,6 +446,7 @@ public class MainView extends JFrame {
 						toughnessField.getText(),
 						setField.getText());
 				cards.add(newCard);
+				*/
 				//Store it
 				PreparedStatement prep = databaseConnection.prepareStatement("insert into cards values (?, ?, ?, ?, ?, ?, ?, ?);");
 				prep.setString(1, nameField.getText());
@@ -472,7 +473,7 @@ public class MainView extends JFrame {
 					//add to local arch
 					for (Archetype a : archetypes){
 						if(a.name.equalsIgnoreCase(s)){
-							a.addCard(newCard.getName());
+							//a.addCard(newCard.getName());
 						}
 					}
 					prep = databaseConnection.prepareStatement("insert into archetypeMembers values (?, ?);");
@@ -486,7 +487,7 @@ public class MainView extends JFrame {
 			}
 		}
 	}	
-	public static Color toRGB(String colors){
+	public static Color toRGB(String[] colors){
 		Color GOLD = new Color(255, 245, 135);
 		Color WHITE = new Color(240, 230, 165);
 		Color BLUE = new Color(150, 205, 222);
@@ -494,7 +495,8 @@ public class MainView extends JFrame {
 		Color RED = new Color(255, 110, 50);
 		Color GREEN = new Color(125, 215, 95);
 		Color BROWN = new Color(190, 160, 100);
-		
+		return Color.blue;
+		/*
 		if (colors.length() > 1) {
 			return(GOLD);
 		}
@@ -512,6 +514,7 @@ public class MainView extends JFrame {
 		default:
 			return(BROWN);
 		}
+		*/
 	}
 	
 	//Custom Swing Classes

@@ -69,13 +69,14 @@ public class SQLCubeLoader {
 				System.out.println("name: " + rs.getString("name"));			
 				Card card = new Card(
 						rs.getString("name"),
-						rs.getString("cost"),
-						rs.getString("color"),
-						rs.getString("typeline"),
-						rs.getString("rarity"),
-						rs.getString("power"),
-						rs.getString("toughness"),
-						rs.getString("mset"));
+						rs.getString("manaCost"),
+						rs.getString("colors"),
+						rs.getString("types"),
+						rs.getString("subtypes"),
+						rs.getString("text"),
+						rs.getString("flavor"),
+						rs.getInt("power"),
+						rs.getInt("toughness"));
 				cards.add(card);
 				count++;
 			}

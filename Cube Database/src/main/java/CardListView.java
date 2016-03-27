@@ -150,7 +150,7 @@ public class CardListView extends JPanel {
 		cardList.setFont(uif);
 		cardList.setBackground(Color.black);
 		cardList.setForeground(Color.white);
-		cardList.setPrototypeCellValue(new Card("", "", "", "", "", "", "", ""));
+		cardList.setPrototypeCellValue(new Card(""));
 		cardList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 				if (!event.getValueIsAdjusting()) {
@@ -197,9 +197,16 @@ public class CardListView extends JPanel {
 				prep = databaseConnection.prepareStatement("select * from cards;");
 			ResultSet rs = prep.executeQuery();
 			while (rs.next()) {
-				Card card = new Card(rs.getString("name"), rs.getString("cost"), rs.getString("color"),
-						rs.getString("typeline"), rs.getString("rarity"), rs.getString("power"), rs.getString("toughness"),
-						rs.getString("mset"));
+				Card card = new Card(
+						rs.getString("name"),
+						rs.getString("manaCost"),
+						rs.getString("colors"),
+						rs.getString("types"),
+						rs.getString("subtypes"),
+						rs.getString("text"),
+						rs.getString("flavor"),
+						rs.getInt("power"),
+						rs.getInt("toughness"));
 				cardSearchResults.add(card);
 			}
 			rs.close();
@@ -235,9 +242,16 @@ public class CardListView extends JPanel {
 
 			ResultSet rs = prep.executeQuery();
 			while (rs.next()) {
-				Card card = new Card(rs.getString("name"), rs.getString("cost"), rs.getString("color"),
-						rs.getString("typeline"), rs.getString("rarity"), rs.getString("power"), rs.getString("toughness"),
-						rs.getString("mset"));
+				Card card = new Card(
+						rs.getString("name"),
+						rs.getString("manaCost"),
+						rs.getString("colors"),
+						rs.getString("types"),
+						rs.getString("subtypes"),
+						rs.getString("text"),
+						rs.getString("flavor"),
+						rs.getInt("power"),
+						rs.getInt("toughness"));
 				cardSearchResults.add(card);
 			}
 			rs.close();
@@ -271,9 +285,16 @@ public class CardListView extends JPanel {
 
 			ResultSet rs = prep.executeQuery();
 			while (rs.next()) {
-				Card card = new Card(rs.getString("name"), rs.getString("cost"), rs.getString("color"),
-						rs.getString("typeline"), rs.getString("rarity"), rs.getString("power"), rs.getString("toughness"),
-						rs.getString("mset"));
+				Card card = new Card(
+						rs.getString("name"),
+						rs.getString("manaCost"),
+						rs.getString("colors"),
+						rs.getString("types"),
+						rs.getString("subtypes"),
+						rs.getString("text"),
+						rs.getString("flavor"),
+						rs.getInt("power"),
+						rs.getInt("toughness"));
 				cardSearchResults.add(card);
 			}
 			rs.close();

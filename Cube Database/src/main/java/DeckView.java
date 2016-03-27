@@ -94,9 +94,16 @@ public class DeckView extends JFrame{
 				prep = databaseConnection.prepareStatement("select * from cards where name=? order by name asc;");
 				prep.setString(1, s);
 				rs = prep.executeQuery();
-				Card card = new Card(rs.getString("name"), rs.getString("cost"), rs.getString("color"),
-						rs.getString("typeline"), rs.getString("rarity"), rs.getString("power"), rs.getString("toughness"),
-						rs.getString("mset"));
+				Card card = new Card(
+						rs.getString("name"),
+						rs.getString("manaCost"),
+						rs.getString("colors"),
+						rs.getString("types"),
+						rs.getString("subtypes"),
+						rs.getString("text"),
+						rs.getString("flavor"),
+						rs.getInt("power"),
+						rs.getInt("toughness"));
 				cards.add(card);
 			}
 			rs.close();

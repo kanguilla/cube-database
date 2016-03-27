@@ -25,7 +25,7 @@ public class CardDialog extends JDialog {
         details.setLayout(new GridBagLayout());
         this.getContentPane().add(details);
         GridBagConstraints c = new GridBagConstraints(); 
-        details.setBackground(MainView.toRGB(card.getColors()));
+       // details.setBackground(MainView.toRGB(card.getColors()));
 
         c.insets = new Insets(5, 5, 5, 5);
         c.fill = GridBagConstraints.BOTH;
@@ -83,7 +83,6 @@ public class CardDialog extends JDialog {
 	        details.add(aLabel, c);
         }
         
-        aLabel = new JLabel(card.getSet());
         aLabel.setFont(font1);
         c.gridy++;
         details.add(aLabel, c);

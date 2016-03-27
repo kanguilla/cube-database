@@ -1,16 +1,17 @@
 package main.java;
 
+
 public class Card{
 	String name;
 	
 	String manaCost;
-	String cmc;
+	int cmc;
 	String[] colors;
 	
 	String type;
 	String[] supertypes;
 	String[] types;
-	String[] subtypes;
+	String[] subtypes = null;
 	
 	String rarity;
 	
@@ -18,44 +19,39 @@ public class Card{
 	String flavor;
 	
 	String artist;
-	String number;
+	int number;
 	
-	String power;
-	String toughness;
+	int power;
+	int toughness;
 	
 	String layout;
 	String multiverseid;
 	String imageName;
 	String id;
 	
-	
-	String set;
-	String types2;
-	String colors2;	
-	
-	public Card(String name, String cost, String colors, String types, String rarity, String power, String toughness, String set){
+	public Card(String name, String cost, String colors, String types, String subtypes, String text, String flavor, int power, int toughness){
 		this.name = name;
 		this.manaCost = cost;
-		this.types2 = types;
-		this.colors2 = colors;
+		this.types = types.split(" ");
+		this.subtypes = subtypes.split(" ");
+		
+		
+		this.colors = colors.split(" ");
 		this.power = power;
 		this.toughness = toughness;
-		this.rarity = rarity;
-		this.set = set;
 	}
 	
-	public Card(String name){
+	public Card(String name) {
 		this.name = name;
 	}
-	
+
 	public String getName(){return name;}
 	public String getCost(){return manaCost;}
-	public String getColors(){return colors2;}
-	public String getTypes(){return types2;}
+	public String[] getColors(){return colors;}
+	public String getTypes(){return type;}
 	public String getRarity(){return rarity;}
-	public String getPower(){return power;}
-	public String getToughness(){return toughness;}
-	public String getSet(){return set;}
+	public int getPower(){return power;}
+	public int getToughness(){return toughness;}
 	
 	@Override
 	public String toString(){
