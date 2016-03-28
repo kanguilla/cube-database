@@ -9,8 +9,8 @@ public class CardDialog extends JDialog {
 	Font font1 = new Font("Arial", Font.BOLD, 14);
 	Font font2 = new Font("Arial", Font.ITALIC, 16);
 	
-	public CardDialog(Frame owner,  String title, Card card){
-		super(owner, title);
+	public CardDialog(Card card){
+		super();
 		this.setSize(250, 250);
 		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		JLabel aLabel = new JLabel(card.getName());
@@ -42,12 +42,12 @@ public class CardDialog extends JDialog {
         c.gridy++;
         details.add(aLabel, c);
         
-        if(card.getTypes().contains("Creature")){
+        //if(card.getTypes().contains("Creature")){
 	        aLabel = new JLabel("P/T");
 	        aLabel.setFont(font2);
 	        c.gridy++;
 	        details.add(aLabel, c);
-        }
+        //}
 
 
         aLabel = new JLabel("Set");
@@ -76,12 +76,12 @@ public class CardDialog extends JDialog {
         c.gridy++;
         details.add(aLabel, c);
         
-        if(card.getTypes().contains("Creature")){
+        //if(card.getTypes().contains("Creature")){
         	aLabel= new JLabel(card.getPower() + "/"+card.getToughness());
         	aLabel.setFont(font1);
         	c.gridy++;
 	        details.add(aLabel, c);
-        }
+        //}
         
         aLabel.setFont(font1);
         c.gridy++;

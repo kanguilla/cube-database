@@ -151,7 +151,7 @@ public class MainView extends JFrame {
 		c.weighty = 0.0;
 		add(buttonPanel, c);
 		
-		cardList = new CardListView(thisFrame, databaseConnection, cards, null, null);
+		cardList = new CardListView(thisFrame, cards, null, null);
 		c.gridx = 0;
 		c.gridy = 3;
 		c.gridwidth = 2;
@@ -533,7 +533,7 @@ public class MainView extends JFrame {
 					}
 				}
 			}
-			this.add(new CardListView(thisFrame, databaseConnection, memberCards, null, arch));
+			this.add(new CardListView(thisFrame, memberCards, null, arch));
 		}
 	}
 	class ArchetypePanel extends JPanel{

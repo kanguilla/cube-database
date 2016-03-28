@@ -70,7 +70,7 @@ public class SQLCubeLoader {
 				Card card = new Card(
 						rs.getString("name"),
 						rs.getString("manaCost"),
-						rs.getString("colors"),
+						rs.getString("color"),
 						rs.getString("types"),
 						rs.getString("subtypes"),
 						rs.getString("text"),

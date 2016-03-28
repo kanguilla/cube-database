@@ -63,7 +63,7 @@ public class Test2 {
 				if(c == '}'){
 					b--;
 					if(b ==  0){
-						output.add(s.substring(1).replaceAll("\\p{Pd}", "-"));
+						output.add(s.substring(1).replaceAll("\\p{Pd}", "-").replaceAll("Æ", "AE").replaceAll("•", "*"));
 						counter++;
 						s = "";
 					};
@@ -103,10 +103,10 @@ public class Test2 {
 				
 				String colorA = "";
 				if(c.colors == null){
-					colorA = "C";
+					colorA = "C";	
 				}else{
 					for (String s : c.colors){
-						colorA += s.substring(0, 1).toUpperCase();
+						colorA += (s.equals("Blue")) ? "U" :s.substring(0, 1).toUpperCase();
 					}
 				}
 				prep.setString(1, c.name);

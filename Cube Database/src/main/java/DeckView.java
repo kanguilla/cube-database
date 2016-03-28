@@ -35,7 +35,7 @@ public class DeckView extends JFrame{
 		c.fill = GridBagConstraints.BOTH;
 		
 		loadCards();
-		cardList = new CardListView(view, databaseConnection, cards, deck, null);
+		cardList = new CardListView(view, cards, deck, null);
 		c.gridx = 0;
 		c.gridy = 0;
 		c.gridwidth = 2;
