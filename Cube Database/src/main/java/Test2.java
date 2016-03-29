@@ -87,10 +87,6 @@ public class Test2 {
 		return c;
 	}
 	
-	public void toStringJson(Card c){
-		System.out.println(gson.toJson(c));
-	}
-	
 	public void commit(ArrayList<String> cards, Connection database) throws SQLException{
 		PreparedStatement prep = database.prepareStatement("insert into cards values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 		database.setAutoCommit(false);
@@ -110,7 +106,7 @@ public class Test2 {
 					}
 				}
 				prep.setString(1, c.name);
-				prep.setString(2, c.manaCost);
+				prep.setString(2, (c.manaCost != null) ? c.manaCost.replaceAll("\\{", "").replaceAll("\\}", "") : "");
 				prep.setDouble(3, c.cmc);
 				prep.setString(4, (c.colors != null) ? colorA : "C");
 				prep.setString(5, String.join(" ", c.types));
@@ -120,8 +116,6 @@ public class Test2 {
 				prep.setString(9, c.power);
 				prep.setString(10, c.toughness);
 				prep.addBatch();
-				//System.out.println("Commit " + c.name + " finished with code " + prep.executeUpdate());
-				
 			}
 		}
 		prep.executeBatch();

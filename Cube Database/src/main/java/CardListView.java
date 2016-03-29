@@ -29,6 +29,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class CardListView extends JPanel {
@@ -130,16 +131,17 @@ public class CardListView extends JPanel {
 		c.weighty = 0.0;
 		add(colorBar, c);
 		
-		String col[] = {"Name","Cost", "Type", "P/T", "Text"};
+		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color" };
 		CardTableModel tableModel = new CardTableModel(col, 0);
-		for (Card card : cards){
-			String[] data = {card.name, card.manaCost, String.join(" ", card.types) + " - " + String.join(" ", card.subtypes), card.power + "/" + card.toughness, card.text};
-			tableModel.addRow(data);
+		for (Card card : cards) {
+			tableModel.addRow(card.toRowData());
+			cardList.setModel(tableModel);
 		}
 		cardList = new JTable(tableModel);
 		cardList.getTableHeader().setBackground(Color.black);
 		cardList.getTableHeader().setForeground(Color.white);
 		cardList.setFillsViewportHeight(true);
+		cardList.setDefaultRenderer(Object.class, new ColorRenderer());
 		cardList.setShowGrid(false);
 		cardList.setBackground(Color.black);
 		cardList.setForeground(Color.white);
@@ -168,26 +170,20 @@ public class CardListView extends JPanel {
 	public void update(ArrayList<Card> newCards) {
 		System.out.println("Updating with " + newCards.size() + " cards");
 		this.cards = newCards;
-		String col[] = { "Name", "Cost", "Type", "P/T", "Text" };
+		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color" };
 		CardTableModel tableModel = new CardTableModel(col, 0);
 		for (Card card : cards) {
-			String[] data = { card.name, card.manaCost,
-					String.join(" ", card.types) + " - " + String.join(" ", card.subtypes),
-					card.power + "/" + card.toughness, card.text };
-			tableModel.addRow(data);
+			tableModel.addRow(card.toRowData());
 			cardList.setModel(tableModel);
 		}
 	}
 	
 	public void update() {	
 		this.cards = databaseConnection.query();
-		String col[] = { "Name", "Cost", "Type", "P/T", "Text" };
+		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color" };
 		CardTableModel tableModel = new CardTableModel(col, 0);
 		for (Card card : cards) {
-			String[] data = { card.name, card.manaCost,
-					String.join(" ", card.types) + " - " + String.join(" ", card.subtypes),
-					card.power + "/" + card.toughness, card.text };
-			tableModel.addRow(data);
+			tableModel.addRow(card.toRowData());
 			cardList.setModel(tableModel);
 		}
 	}
@@ -214,7 +210,18 @@ public class CardListView extends JPanel {
 		*/
 	}
 
-	class ColorRenderer extends JLabel implements ListCellRenderer<Object> {
+	class ColorRenderer extends DefaultTableCellRenderer {
+		
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+
+			super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+
+			String color = (String) table.getModel().getValueAt(row, 5);
+			setForeground(toRGB(color.split("")));
+			return this;
+		}
+		
+		/*
 		private static final long serialVersionUID = 1L;
 		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 			if (value == null)return this;
@@ -230,6 +237,7 @@ public class CardListView extends JPanel {
 			setForeground(toRGB(c.getColors()));
 			return this;
 		}
+		*/
 	}
 
 	class ColorBox extends JCheckBox {
@@ -258,9 +266,9 @@ public class CardListView extends JPanel {
 		}
 	}
 
-	public Color toRGB(String[] colors) {
+	public static Color toRGB(String[] colors) {
 		Color GOLD = new Color(255, 245, 135);
-		Color WHITE = new Color(240, 230, 165);
+		Color WHITE = new Color(240, 235, 215);
 		Color BLUE = new Color(150, 205, 222);
 		Color BLACK = new Color(128, 128, 128);
 		Color RED = new Color(255, 110, 50);

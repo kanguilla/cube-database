@@ -34,11 +34,11 @@ public class Card{
 		this.manaCost = cost;
 		this.types = types.split(" ");
 		this.subtypes = subtypes.split(" ");
-		
+		this.text = text;
 		
 		this.colors = colors.split(" ");
-		this.power = power;
-		this.toughness = toughness;
+		this.power = (power != null) ? power : "";
+		this.toughness = (toughness != null) ? toughness : "";
 	}
 	
 	public Card(String name) {
@@ -48,14 +48,26 @@ public class Card{
 	public String getName(){return name;}
 	public String getCost(){return manaCost;}
 	public String[] getColors(){return colors;}
-	public String getTypes(){return type;}
+	public String[] getTypes(){return types;}
 	public String getRarity(){return rarity;}
 	public String getPower(){return power;}
 	public String getToughness(){return toughness;}
+	public String getText(){return text;}
 	
 	@Override
 	public String toString(){
 		return name;
+	}
+	
+	public String[] toRowData(){
+		return new String[]{
+				name,
+				manaCost,
+				String.join(" ", types) + ((subtypes[0].length()>1) ? " - " : "") + String.join(" ", subtypes),
+				!(power == "" || toughness == "") ? power + "/" + toughness : "",
+				text,
+				String.join(" ", colors)
+		};
 	}
 	
 	
