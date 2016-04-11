@@ -14,8 +14,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Random;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 
