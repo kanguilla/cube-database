@@ -41,7 +41,8 @@ public class Generator {
 					+ "artist varchar (100),"
 					+ "flavor varchar (200),"
 					+ "number varchar (5),"
-					+ "layout varchar (20));");
+					+ "layout varchar (20),"
+					+ "mset varchar (30));");
 			System.out.println("Created card table ("+ (System.currentTimeMillis() - time)/1000 +")");
 			
 			time = System.currentTimeMillis();
@@ -72,7 +73,7 @@ public class Generator {
 			System.out.println("Finished sets ("+ (System.currentTimeMillis() - time)/1000 +")");
 
 			//add the cards
-			prep = database.prepareStatement("insert into cards values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+			prep = database.prepareStatement("insert into cards values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 			database.setAutoCommit(false);
 			time = System.currentTimeMillis();
 			for (MtgSet set : mtg.data.values()){
@@ -95,6 +96,7 @@ public class Generator {
 					prep.setString(14, card.flavor);
 					prep.setString(15, (card.number != null) ? card.number : "0");
 					prep.setString(16, card.layout);
+					prep.setString(17, card.set);
 					prep.addBatch();
 				}
 			}

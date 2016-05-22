@@ -12,6 +12,9 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
+
 import javax.swing.AbstractButton;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -31,10 +34,14 @@ public class CardListView extends JPanel {
 	private JTable cardList;
 	private JButton cardFilter;
 	private Font uif = new Font("Arial", Font.BOLD, 14);
-	private CubeConnection databaseConnection;
+	private MtgDatabase databaseConnection;
 	private JTextField cardFilterText;
-
-	public CardListView(CubeConnection connection) {
+	private Set<String> args = new TreeSet<String>();
+	String prototype = "select * from cards ";
+	String ordering = "order by name asc";
+	String textFilter = "";
+	
+	public CardListView(MtgDatabase connection) {
 		this.thisFrame = this;
 		this.setLayout(new GridBagLayout());
 		this.databaseConnection = connection;
@@ -51,10 +58,10 @@ public class CardListView extends JPanel {
 			@Override
 			public void keyTyped(KeyEvent arg0) {
 				if(Character.isAlphabetic(arg0.getKeyChar())){
-					databaseConnection.setTextFilter(cardFilterText.getText() + arg0.getKeyChar());
+					setTextFilter(cardFilterText.getText() + arg0.getKeyChar());
 					update();
 				}else{
-					databaseConnection.setTextFilter(cardFilterText.getText());
+					setTextFilter(cardFilterText.getText());
 					update();
 				}
 			}
@@ -77,7 +84,7 @@ public class CardListView extends JPanel {
 		cardFilter = new JButton("Filter");
 		cardFilter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				databaseConnection.setTextFilter(cardFilterText.getText());
+				setTextFilter(cardFilterText.getText());
 				update();
 			}
 		});
@@ -93,15 +100,15 @@ public class CardListView extends JPanel {
 		JPanel colorBar = new JPanel();
 		colorBar.setBackground(Color.cyan);
 		colorBar.setLayout(new BoxLayout(colorBar, BoxLayout.X_AXIS));
-		JCheckBox whiteBox = new ColorBox("White", "W", this);
+		JCheckBox whiteBox = new ColorBox("White", "White", this);
 		colorBar.add(whiteBox);
-		JCheckBox blueBox = new ColorBox("Blue", "U", this);
+		JCheckBox blueBox = new ColorBox("Blue", "Blue", this);
 		colorBar.add(blueBox);
-		JCheckBox blackBox = new ColorBox("Black", "B", this);
+		JCheckBox blackBox = new ColorBox("Black", "Black", this);
 		colorBar.add(blackBox);
-		JCheckBox redBox = new ColorBox("Red", "R", this);
+		JCheckBox redBox = new ColorBox("Red", "Red", this);
 		colorBar.add(redBox);
-		JCheckBox greenBox = new ColorBox("Green", "G", this);
+		JCheckBox greenBox = new ColorBox("Green", "Green", this);
 		colorBar.add(greenBox);
 		
 		JButton clearSelection = new JButton("Deselect Card");
@@ -152,12 +159,34 @@ public class CardListView extends JPanel {
 		c.weighty = 1.0;
 		add(scrollPane, c);
 
-		update(connection.allCards());
 	}
-
-	public void update(ArrayList<Card> newCards) {
-		System.out.println("Updating with " + newCards.size() + " cards");
-		this.cards = newCards;
+	
+	public void update() {	
+		ArrayList<Card> cards = new ArrayList<Card>();
+		// Construct the query
+		String sql = prototype;
+		int counter = 0;
+		for (String s : args) {
+			System.out.println("Arg# :" + s);
+			if (counter > 0) {
+				sql += "and ";
+			} else {
+				sql += "where ";
+			}
+			sql += s;
+			counter++;
+		}
+		if (textFilter.length() > 0) {
+			if (counter == 0) {
+				sql += "where " + textFilter;
+			} else {
+				sql += "and " + textFilter;
+			}
+		}
+		sql += (ordering + ";");
+		System.out.println("Search as \"" + sql + "\"");
+		cards = databaseConnection.query(sql);
+		this.cards = cards;
 		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color" };
 		CardTableModel tableModel = new CardTableModel(col, 0);
 		for (Card card : cards) {
@@ -166,8 +195,8 @@ public class CardListView extends JPanel {
 		}
 	}
 	
-	public void update() {	
-		this.cards = databaseConnection.query();
+	public void update(String sql) {	
+		this.cards = databaseConnection.query(sql);
 		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color" };
 		CardTableModel tableModel = new CardTableModel(col, 0);
 		for (Card card : cards) {
@@ -176,6 +205,19 @@ public class CardListView extends JPanel {
 		}
 	}
 
+	public void addColorFilter(String color){
+		args.add("colors like \"%"+color+"%\" ");
+	}
+	
+	public void removeColorFilter(String color){
+		args.remove("colors like \"%"+color+"%\" ");
+	}
+	
+
+	public void setTextFilter(String text) {
+		textFilter = ("name like \"%"+text+"%\" ");
+	}
+	
 	public void selectCard() {
 		/*
 		Card selectedCard = (Card) (cardList.getSelectedValue());
@@ -243,10 +285,10 @@ public class CardListView extends JPanel {
 					AbstractButton button = (AbstractButton) actionEvent.getSource();
 					boolean selected = button.getModel().isSelected();
 					if (selected){
-						parent.databaseConnection.addColorFilter(color);
+						addColorFilter(color);
 						System.out.println("Selected "+ color);
 					}else if (!selected){
-						parent.databaseConnection.removeColorFilter(color);
+						removeColorFilter(color);
 						System.out.println("Deselected "+ color);
 					}
 					parent.update();

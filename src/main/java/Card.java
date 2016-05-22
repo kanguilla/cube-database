@@ -25,13 +25,14 @@ public class Card{
 		String id; //<-primary key
 		String number;
 		String layout;
+		String set;
 		
 		public Card(
 				String name, String manaCost, String cmc, 
 				String colors, String colorIdentity, 
 				String types, String subTypes, String power, String toughness, 
 				String text, String rarity, String artist, String flavor, 
-				String id, String number, String layout){
+				String id, String number, String layout, String set){
 			this.name = name; this.manaCost = manaCost; this.cmc = cmc;
 			this.colors = colors.split(",");		
 			this.colorIdentity = colorIdentity.split(",");
@@ -40,6 +41,7 @@ public class Card{
 			this.power = power;this.toughness = toughness;this.text = text;
 			this.rarity = rarity;this.artist = artist;this.flavor = flavor;this.id = id;
 			this.number = number;this.layout = layout;
+			this.set = set;
 		}
 		
 		public String getName(){return name;}
