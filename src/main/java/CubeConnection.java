@@ -29,7 +29,7 @@ public class CubeConnection {
 			e.printStackTrace();
 		}
 	}
-	public ArrayList<oldCard> allCards(){
+	public ArrayList<Card> allCards(){
 		return searchCards("select * from cards order by name asc;");
 	}
 
@@ -45,21 +45,28 @@ public class CubeConnection {
 		textFilter = (" name like \"%"+text+"%\" ");
 	}
 	
-	public ArrayList<oldCard> searchCards(String sqlQueryString){
-		ArrayList<oldCard> cards = new ArrayList<oldCard>();
+	public ArrayList<Card> searchCards(String sqlQueryString){
+		ArrayList<Card> cards = new ArrayList<Card>();
 		try{
 			ResultSet rs = stat.executeQuery(sqlQueryString);
 			while (rs.next()) {
-				oldCard card = new oldCard(
+				Card card = new Card(
 						rs.getString("name"),
 						rs.getString("manaCost"),
-						rs.getString("color"),
+						rs.getString("cmc"),
+						rs.getString("colors"),
+						rs.getString("colorIdentity"),
 						rs.getString("types"),
 						rs.getString("subtypes"),
-						rs.getString("text"),
-						rs.getString("flavor"),
 						rs.getString("power"),
-						rs.getString("toughness"));
+						rs.getString("toughness"),
+						rs.getString("text"),
+						rs.getString("rarity"),
+						rs.getString("artist"),
+						rs.getString("flavor"),
+						rs.getString("id"),
+						rs.getString("number"),
+						rs.getString("layout"));
 				cards.add(card);
 			}
 			rs.close();
@@ -69,8 +76,8 @@ public class CubeConnection {
 		return cards;
 	}
 	
-	public ArrayList<oldCard> query() {
-		ArrayList<oldCard> cards = new ArrayList<oldCard>();
+	public ArrayList<Card> query() {
+		ArrayList<Card> cards = new ArrayList<Card>();
 		try{
 			//Construct the query
 			String sql = prototype;
@@ -96,16 +103,23 @@ public class CubeConnection {
 			System.out.println("Search as \"" + sql + "\"");
 			ResultSet rs = stat.executeQuery(sql);
 			while (rs.next()) {
-				oldCard card = new oldCard(
+				Card card = new Card(
 						rs.getString("name"),
 						rs.getString("manaCost"),
-						rs.getString("color"),
+						rs.getString("cmc"),
+						rs.getString("colors"),
+						rs.getString("colorIdentity"),
 						rs.getString("types"),
 						rs.getString("subtypes"),
-						rs.getString("text"),
-						rs.getString("flavor"),
 						rs.getString("power"),
-						rs.getString("toughness"));
+						rs.getString("toughness"),
+						rs.getString("text"),
+						rs.getString("rarity"),
+						rs.getString("artist"),
+						rs.getString("flavor"),
+						rs.getString("id"),
+						rs.getString("number"),
+						rs.getString("layout"));
 				cards.add(card);
 			}
 			rs.close();
