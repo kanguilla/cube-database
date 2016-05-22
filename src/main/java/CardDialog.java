@@ -1,12 +1,6 @@
 package main.java;
 
 import java.awt.*;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Arrays;
 
 import javax.swing.*;
@@ -18,11 +12,11 @@ public class CardDialog extends JDialog {
 	
 	Font font1 = new Font("Arial", Font.BOLD, 14);
 	Font font2 = new Font("Arial", Font.ITALIC, 16);
-	oldCard card;
+	Card card;
 	
 	JDialog thisFrame;
 	
-	public CardDialog(oldCard card){
+	public CardDialog(Card card){
 		super();
 		this.setSize(300, 300);
 		thisFrame = this;

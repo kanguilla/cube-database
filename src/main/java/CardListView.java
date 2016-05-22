@@ -12,41 +12,29 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.TreeSet;
 import javax.swing.AbstractButton;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class CardListView extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private CardListView thisFrame;
-	private ArrayList<oldCard> cards = new ArrayList<oldCard>();
+	public CardListView thisFrame;
+	private ArrayList<Card> cards = new ArrayList<Card>();
 	private JTable cardList;
 	private JButton cardFilter;
 	private Font uif = new Font("Arial", Font.BOLD, 14);
 	private CubeConnection databaseConnection;
 	private JTextField cardFilterText;
-	private Deck deck;
-	private Archetype archetype;
 
-	public CardListView(CubeConnection connection, ArrayList<oldCard> initialCards, Deck deckContext, Archetype archContext) {
-		this.deck = deckContext;
-		this.archetype = archContext;
+	public CardListView(CubeConnection connection) {
 		this.thisFrame = this;
 		this.setLayout(new GridBagLayout());
 		this.databaseConnection = connection;
@@ -133,7 +121,7 @@ public class CardListView extends JPanel {
 		
 		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color" };
 		CardTableModel tableModel = new CardTableModel(col, 0);
-		for (oldCard card : cards) {
+		for (Card card : cards) {
 			tableModel.addRow(card.toRowData());
 			cardList.setModel(tableModel);
 		}
@@ -150,7 +138,7 @@ public class CardListView extends JPanel {
 				if (event.getClickCount() == 2) {
 					JTable table = (JTable) event.getSource();
 					int index = table.getSelectedRow();
-					oldCard c = cards.get(index);
+					Card c = cards.get(index);
 					CardDialog dialog = new CardDialog(c);
 					dialog.setVisible(true);
 				}
@@ -164,15 +152,15 @@ public class CardListView extends JPanel {
 		c.weighty = 1.0;
 		add(scrollPane, c);
 
-		update(initialCards);
+		update(connection.allCards());
 	}
 
-	public void update(ArrayList<oldCard> newCards) {
+	public void update(ArrayList<Card> newCards) {
 		System.out.println("Updating with " + newCards.size() + " cards");
 		this.cards = newCards;
 		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color" };
 		CardTableModel tableModel = new CardTableModel(col, 0);
-		for (oldCard card : cards) {
+		for (Card card : cards) {
 			tableModel.addRow(card.toRowData());
 			cardList.setModel(tableModel);
 		}
@@ -182,7 +170,7 @@ public class CardListView extends JPanel {
 		this.cards = databaseConnection.query();
 		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color" };
 		CardTableModel tableModel = new CardTableModel(col, 0);
-		for (oldCard card : cards) {
+		for (Card card : cards) {
 			tableModel.addRow(card.toRowData());
 			cardList.setModel(tableModel);
 		}
@@ -211,13 +199,14 @@ public class CardListView extends JPanel {
 	}
 
 	class ColorRenderer extends DefaultTableCellRenderer {
-		
+		private static final long serialVersionUID = 1L;
+
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
 
 			super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
 
 			String color = (String) table.getModel().getValueAt(row, 5);
-			setForeground(toRGB(color.split("")));
+			setForeground(toRGB(color.split(" ")));
 			return this;
 		}
 		
@@ -266,7 +255,7 @@ public class CardListView extends JPanel {
 		}
 	}
 
-	public static Color toRGB(String[] colors) {
+	public static Color toRGB(String[] strings) {
 		Color GOLD = new Color(255, 245, 135);
 		Color WHITE = new Color(240, 235, 215);
 		Color BLUE = new Color(150, 205, 222);
@@ -274,20 +263,20 @@ public class CardListView extends JPanel {
 		Color RED = new Color(255, 110, 50);
 		Color GREEN = new Color(125, 215, 95);
 		Color BROWN = new Color(190, 160, 100);
-		if (colors == null || colors.length > 1) {
+		if (strings == null || strings.length > 1) {
 			return(GOLD);
 		}
 		
-		switch (colors[0]) {
-		case ("W"):
+		switch (strings[0]) {
+		case ("White"):
 			return(WHITE);
-		case ("U"):
+		case ("Blue"):
 			return(BLUE);
-		case ("B"):
+		case ("Black"):
 			return(BLACK);
-		case ("R"):
+		case ("Red"):
 			return(RED);
-		case ("G"):
+		case ("Green"):
 			return(GREEN);
 		default:
 			return(BROWN);

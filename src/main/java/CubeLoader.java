@@ -12,8 +12,8 @@ public class CubeLoader extends JFrame{
 	}
 	
 	public CubeLoader(){
-		connection = new CubeConnection("cube.db");
-		CardListView cardList = new CardListView(connection, connection.allCards(), null, null);
+		connection = new CubeConnection("mtg.db");
+		CardListView cardList = new CardListView(connection);
 		this.getContentPane().add(cardList);
 		this.setSize(500, 500);
 		this.setVisible(true);
