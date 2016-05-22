@@ -52,10 +52,11 @@ public class Card{
 		public String getText(){return text;}
 		public String getPower(){return power;}
 		public String getToughness(){return toughness;}
+		public String getSet(){return set;}
 		
 		public String[] toRowData() {
 			return new String[]{getName(), getCost(), 
 					String.join(" ", getTypes()) + " - " + String.join(" ", getSubtypes()), 
-					getPower(), getText(), String.join(" ",getColors())};
+					getPower(), getText(), String.join(" ",getColors()), getSet()};
 		}
 	}

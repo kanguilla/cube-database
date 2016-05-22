@@ -2,22 +2,22 @@ package main.java;
 
 import java.util.List;
 
-public class MtgSet implements Comparable<MtgSet>{
+public class MtgSet{
 	String name;
 	String code;
 	String magicCardsInfoCode;
 	String releaseDate;
-	String border;
 	String type;
 	List<Object> booster;
 	String mkm_name;
 	int mkm_id;
 	List<Card> cards;
-	
-	@Override
-	public int compareTo(MtgSet other) {
-		
-		return 0;
+
+	public MtgSet(String name, String code, String mcic, String releaseDate, String type){
+		this.name = name;
+		this.code = code;
+		this.magicCardsInfoCode = mcic;
+		this.releaseDate = releaseDate;
+		this.type = type;
 	}
-	
 }

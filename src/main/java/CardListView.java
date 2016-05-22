@@ -126,7 +126,7 @@ public class CardListView extends JPanel {
 		c.weighty = 0.0;
 		add(colorBar, c);
 		
-		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color" };
+		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color", "Set" };
 		CardTableModel tableModel = new CardTableModel(col, 0);
 		for (Card card : cards) {
 			tableModel.addRow(card.toRowData());
@@ -185,9 +185,9 @@ public class CardListView extends JPanel {
 		}
 		sql += (ordering + ";");
 		System.out.println("Search as \"" + sql + "\"");
-		cards = databaseConnection.query(sql);
+		cards = databaseConnection.queryCards(sql);
 		this.cards = cards;
-		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color" };
+		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color", "Set"  };
 		CardTableModel tableModel = new CardTableModel(col, 0);
 		for (Card card : cards) {
 			tableModel.addRow(card.toRowData());
@@ -196,8 +196,8 @@ public class CardListView extends JPanel {
 	}
 	
 	public void update(String sql) {	
-		this.cards = databaseConnection.query(sql);
-		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color" };
+		this.cards = databaseConnection.queryCards(sql);
+		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color", "Set"  };
 		CardTableModel tableModel = new CardTableModel(col, 0);
 		for (Card card : cards) {
 			tableModel.addRow(card.toRowData());

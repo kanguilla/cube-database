@@ -96,7 +96,7 @@ public class Generator {
 					prep.setString(14, card.flavor);
 					prep.setString(15, (card.number != null) ? card.number : "0");
 					prep.setString(16, card.layout);
-					prep.setString(17, card.set);
+					prep.setString(17, set.code);
 					prep.addBatch();
 				}
 			}

@@ -24,7 +24,7 @@ public class MtgDatabase {
 		}
 	}
 	
-	public ArrayList<Card> query(String sql) {
+	public ArrayList<Card> queryCards(String sql) {
 		ArrayList<Card> cards = new ArrayList<Card>();
 		try {
 			ResultSet rs = stat.executeQuery(sql);
@@ -54,5 +54,25 @@ public class MtgDatabase {
 			e.printStackTrace();
 		}
 		return cards;
+	}
+	
+	public ArrayList<MtgSet> querySets(String sql) {
+		ArrayList<MtgSet> sets = new ArrayList<MtgSet>();
+		try {
+			ResultSet rs = stat.executeQuery(sql);
+			while (rs.next()) {
+				MtgSet set = new MtgSet(
+						rs.getString("name"),
+						rs.getString("code"),
+						rs.getString("mciCode"),
+						rs.getString("release"),
+						rs.getString("type"));
+				sets.add(set);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return sets;
 	}
 }
