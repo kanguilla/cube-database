@@ -23,7 +23,7 @@ public class Test2 {
 	public static void main(String[] args) throws Exception {
 		
 		Class.forName("org.sqlite.JDBC");
-		Connection database = DriverManager.getConnection("jdbc:sqlite:cube.db");
+		Connection database = DriverManager.getConnection("jdbc:sqlite:mtg.db");
 		
 		Test2 t = new Test2();
 
@@ -77,11 +77,11 @@ public class Test2 {
 		return output;
 	}
 	
-	public Card fromString(String s){
+	public oldCard fromString(String s){
 		s = s.substring(1);
 		int i = s.indexOf("\":");
 		s = s.substring(i + 2);
-		Card c = gson.fromJson(s, Card.class);
+		oldCard c = gson.fromJson(s, oldCard.class);
 		return c;
 	}
 	
@@ -90,7 +90,7 @@ public class Test2 {
 		database.setAutoCommit(false);
 		double time = System.currentTimeMillis();
 		for (String card : cards){
-			Card c = fromString(card);
+			oldCard c = fromString(card);
 			
 			if (!c.layout.equals("token")){
 				//System.out.println(c.name);

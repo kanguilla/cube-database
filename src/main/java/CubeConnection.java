@@ -29,7 +29,7 @@ public class CubeConnection {
 			e.printStackTrace();
 		}
 	}
-	public ArrayList<Card> allCards(){
+	public ArrayList<oldCard> allCards(){
 		return searchCards("select * from cards order by name asc;");
 	}
 
@@ -45,12 +45,12 @@ public class CubeConnection {
 		textFilter = (" name like \"%"+text+"%\" ");
 	}
 	
-	public ArrayList<Card> searchCards(String sqlQueryString){
-		ArrayList<Card> cards = new ArrayList<Card>();
+	public ArrayList<oldCard> searchCards(String sqlQueryString){
+		ArrayList<oldCard> cards = new ArrayList<oldCard>();
 		try{
 			ResultSet rs = stat.executeQuery(sqlQueryString);
 			while (rs.next()) {
-				Card card = new Card(
+				oldCard card = new oldCard(
 						rs.getString("name"),
 						rs.getString("manaCost"),
 						rs.getString("color"),
@@ -69,8 +69,8 @@ public class CubeConnection {
 		return cards;
 	}
 	
-	public ArrayList<Card> query() {
-		ArrayList<Card> cards = new ArrayList<Card>();
+	public ArrayList<oldCard> query() {
+		ArrayList<oldCard> cards = new ArrayList<oldCard>();
 		try{
 			//Construct the query
 			String sql = prototype;
@@ -96,7 +96,7 @@ public class CubeConnection {
 			System.out.println("Search as \"" + sql + "\"");
 			ResultSet rs = stat.executeQuery(sql);
 			while (rs.next()) {
-				Card card = new Card(
+				oldCard card = new oldCard(
 						rs.getString("name"),
 						rs.getString("manaCost"),
 						rs.getString("color"),

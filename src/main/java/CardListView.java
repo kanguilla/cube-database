@@ -35,7 +35,7 @@ import javax.swing.table.DefaultTableModel;
 public class CardListView extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private CardListView thisFrame;
-	private ArrayList<Card> cards = new ArrayList<Card>();
+	private ArrayList<oldCard> cards = new ArrayList<oldCard>();
 	private JTable cardList;
 	private JButton cardFilter;
 	private Font uif = new Font("Arial", Font.BOLD, 14);
@@ -44,7 +44,7 @@ public class CardListView extends JPanel {
 	private Deck deck;
 	private Archetype archetype;
 
-	public CardListView(CubeConnection connection, ArrayList<Card> initialCards, Deck deckContext, Archetype archContext) {
+	public CardListView(CubeConnection connection, ArrayList<oldCard> initialCards, Deck deckContext, Archetype archContext) {
 		this.deck = deckContext;
 		this.archetype = archContext;
 		this.thisFrame = this;
@@ -133,7 +133,7 @@ public class CardListView extends JPanel {
 		
 		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color" };
 		CardTableModel tableModel = new CardTableModel(col, 0);
-		for (Card card : cards) {
+		for (oldCard card : cards) {
 			tableModel.addRow(card.toRowData());
 			cardList.setModel(tableModel);
 		}
@@ -150,7 +150,7 @@ public class CardListView extends JPanel {
 				if (event.getClickCount() == 2) {
 					JTable table = (JTable) event.getSource();
 					int index = table.getSelectedRow();
-					Card c = cards.get(index);
+					oldCard c = cards.get(index);
 					CardDialog dialog = new CardDialog(c);
 					dialog.setVisible(true);
 				}
@@ -167,12 +167,12 @@ public class CardListView extends JPanel {
 		update(initialCards);
 	}
 
-	public void update(ArrayList<Card> newCards) {
+	public void update(ArrayList<oldCard> newCards) {
 		System.out.println("Updating with " + newCards.size() + " cards");
 		this.cards = newCards;
 		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color" };
 		CardTableModel tableModel = new CardTableModel(col, 0);
-		for (Card card : cards) {
+		for (oldCard card : cards) {
 			tableModel.addRow(card.toRowData());
 			cardList.setModel(tableModel);
 		}
@@ -182,7 +182,7 @@ public class CardListView extends JPanel {
 		this.cards = databaseConnection.query();
 		String col[] = { "Name", "Cost", "Type", "P/T", "Text", "Color" };
 		CardTableModel tableModel = new CardTableModel(col, 0);
-		for (Card card : cards) {
+		for (oldCard card : cards) {
 			tableModel.addRow(card.toRowData());
 			cardList.setModel(tableModel);
 		}
