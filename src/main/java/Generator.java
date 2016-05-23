@@ -26,8 +26,7 @@ public class Generator {
 			time = System.currentTimeMillis();
 			stat.executeUpdate("drop table if exists cards;");
 			stat.executeUpdate("create table if not exists cards("
-					+ "id varchar(40) primary key not NULL,"
-					+ "name varchar(50) ,"
+					+ "name varchar(50) primary key not NULL,"
 					+ "manaCost varchar(10),"
 					+ "cmc varchar(10),"
 					+ "colors varchar(10),"
@@ -52,7 +51,6 @@ public class Generator {
 					+ "number varchar (5));");
 			System.out.println("Created contents table ("+ (System.currentTimeMillis() - time)/1000 +")");
 			
-			
 			time = System.currentTimeMillis();
 			stat.executeUpdate("drop table if exists sets;");
 			stat.executeUpdate("create table if not exists sets("
@@ -62,7 +60,6 @@ public class Generator {
 					+ "release varchar(15),"
 					+ "type varchar(15));");
 			System.out.println("Created set table ("+ (System.currentTimeMillis() - time)/1000 +")");
-			
 			
 			//add the sets
 			time = System.currentTimeMillis();
@@ -81,24 +78,23 @@ public class Generator {
 			System.out.println("Finished sets ("+ (System.currentTimeMillis() - time)/1000 +")");
 
 			//add the cards
-			prep = database.prepareStatement("insert into cards values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+			prep = database.prepareStatement("insert or ignore into cards values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			PreparedStatement prep2 = database.prepareStatement("insert into contents values (?, ?, ?, ?, ?, ?, ?);");
 			database.setAutoCommit(false);
 			time = System.currentTimeMillis();
 			for (MtgSet set : mtg.data.values()){
 				for (Card card : set.cards){
-					prep.setString(1, card.id);
-					prep.setString(2, card.name);
-					prep.setString(3, card.manaCost);
-					prep.setString(4, String.valueOf(card.cmc));
-					prep.setString(5, (card.colors != null) ? String.join(",", card.colors) : "");
-					prep.setString(6, (card.colorIdentity != null) ? String.join(",", card.colorIdentity) : "");
-					prep.setString(7, (card.types != null) ? String.join(",", card.types) : "");
-					prep.setString(8, (card.subtypes != null) ? String.join(",", card.subtypes) : "");
-					prep.setString(9, card.power);
-					prep.setString(10, card.toughness);
-					prep.setString(11, card.text);
-					prep.setString(12, card.layout);		
+					prep.setString(1, card.name);
+					prep.setString(2, card.manaCost);
+					prep.setString(3, String.valueOf(card.cmc));
+					prep.setString(4, (card.colors != null) ? String.join(",", card.colors) : "");
+					prep.setString(5, (card.colorIdentity != null) ? String.join(",", card.colorIdentity) : "");
+					prep.setString(6, (card.types != null) ? String.join(",", card.types) : "");
+					prep.setString(7, (card.subtypes != null) ? String.join(",", card.subtypes) : "");
+					prep.setString(8, card.power);
+					prep.setString(9, card.toughness);
+					prep.setString(10, card.text);
+					prep.setString(11, card.layout);		
 					prep.addBatch();
 					
 					prep2.setString(1, card.id);
