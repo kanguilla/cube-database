@@ -75,4 +75,14 @@ public class MtgDatabase {
 		}
 		return sets;
 	}
+	
+	public ResultSet query(String sql) {
+		try {
+			ResultSet rs = stat.executeQuery(sql);
+			return rs;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

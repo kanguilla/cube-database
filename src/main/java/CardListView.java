@@ -146,7 +146,7 @@ public class CardListView extends JPanel {
 					JTable table = (JTable) event.getSource();
 					int index = table.getSelectedRow();
 					Card c = cards.get(index);
-					CardDialog dialog = new CardDialog(c);
+					CardDialog dialog = new CardDialog(c, connection);
 					dialog.setVisible(true);
 				}
 			}});

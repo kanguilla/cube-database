@@ -41,8 +41,7 @@ public class Generator {
 					+ "artist varchar (100),"
 					+ "flavor varchar (200),"
 					+ "number varchar (5),"
-					+ "layout varchar (20),"
-					+ "mset varchar (30));");
+					+ "layout varchar (20));");
 			System.out.println("Created card table ("+ (System.currentTimeMillis() - time)/1000 +")");
 			
 			time = System.currentTimeMillis();
@@ -77,9 +76,9 @@ public class Generator {
 			database.setAutoCommit(false);
 			time = System.currentTimeMillis();
 			for (MtgSet set : mtg.data.values()){
-				
+				int counter = 0;
 				for (Card card : set.cards){
-				
+					counter++;
 					prep.setString(1, card.id);
 					prep.setString(2, card.name);
 					prep.setString(3, card.manaCost);
@@ -94,7 +93,7 @@ public class Generator {
 					prep.setString(12, card.rarity);
 					prep.setString(13, card.artist);
 					prep.setString(14, card.flavor);
-					prep.setString(15, (card.number != null) ? card.number : "0");
+					prep.setString(15, (card.number != null) ? card.number : String.valueOf(counter));
 					prep.setString(16, card.layout);
 					prep.setString(17, set.code);
 					prep.addBatch();

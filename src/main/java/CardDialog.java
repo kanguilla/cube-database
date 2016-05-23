@@ -7,8 +7,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import net.miginfocom.swing.MigLayout;
@@ -21,11 +24,13 @@ public class CardDialog extends JDialog {
 	Card card;
 	
 	JDialog thisFrame;
+	MtgDatabase connection;
 	
-	public CardDialog(Card card){
+	public CardDialog(Card card, MtgDatabase connection){
 		super();
 		this.setSize(300, 600);
 		thisFrame = this;
+		this.connection = connection;
 		this.card = card;
 		this.getContentPane().setLayout(new MigLayout("fill", "[][]", "[][]"));
 		JLabel aLabel = new JLabel(card.getName());
@@ -73,38 +78,26 @@ public class CardDialog extends JDialog {
         	aLabel.setFont(font1);
 	        details.add(aLabel, "wrap");
         }
-        
-       
         this.getContentPane().add(details, "grow, cell 0 1 2 1");
         
-		System.out.println("   " + card.name + "...");
-		String imageUrl = "http://magiccards.info/scans/en/" + card.set + "/" + card.number + ".jpg";
-		String destinationFile = "C:\\Users\\Khalil\\AppData\\Local\\Forge\\Cache\\pics\\cards\\" + card.name
-				+ ".full.jpg";
+        
+        //get the image
+       
 		try {
-
+			ResultSet rs = connection.query("select mciCode from sets where code=\"" + card.set + "\";");
+		    String mciCode = rs.getString("mciCode");
+			System.out.println("   " + card.name + "...");
+			String imageUrl = "http://magiccards.info/scans/en/" +mciCode+ "/" + card.number + ".jpg";
 			URLConnection hc = new URL(imageUrl).openConnection();
-			hc.setRequestProperty("User-Agent",
-					"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36");
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			hc.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36");
 			hc.connect();
-			InputStream is = hc.getInputStream();
-			OutputStream os = new FileOutputStream(destinationFile);
+			Image img = ImageIO.read(hc.getInputStream());
 
-			byte[] b = new byte[2048];
-			int length;
-
-			while ((length = is.read(b)) != -1) {
-				os.write(b, 0, length);
-			}
-
-			is.close();
-			os.close();
+			ImagePanel cardImage = new ImagePanel(img);
+			this.getContentPane().add(cardImage, "grow, cell 0 2 2 1");
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
