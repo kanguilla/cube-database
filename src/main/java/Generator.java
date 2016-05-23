@@ -36,13 +36,22 @@ public class Generator {
 					+ "subtypes varchar(50),"
 					+ "power varchar (3),"
 					+ "toughness varchar (3),"
-					+ "text varchar (400),"
+					+ "text varchar (300),"
+					+ "layout varchar (20));");
+			System.out.println("Created card table ("+ (System.currentTimeMillis() - time)/1000 +")");
+			
+			time = System.currentTimeMillis();
+			stat.executeUpdate("drop table if exists contents;");
+			stat.executeUpdate("create table if not exists contents("
+					+ "cardId varchar (40) primary key not null,"
+					+ "cardName varchar(50) ,"
+					+ "setName varchar(50),"
 					+ "rarity varchar (1),"
 					+ "artist varchar (100),"
 					+ "flavor varchar (200),"
-					+ "number varchar (5),"
-					+ "layout varchar (20));");
-			System.out.println("Created card table ("+ (System.currentTimeMillis() - time)/1000 +")");
+					+ "number varchar (5));");
+			System.out.println("Created contents table ("+ (System.currentTimeMillis() - time)/1000 +")");
+			
 			
 			time = System.currentTimeMillis();
 			stat.executeUpdate("drop table if exists sets;");
@@ -72,13 +81,12 @@ public class Generator {
 			System.out.println("Finished sets ("+ (System.currentTimeMillis() - time)/1000 +")");
 
 			//add the cards
-			prep = database.prepareStatement("insert into cards values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+			prep = database.prepareStatement("insert into cards values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+			PreparedStatement prep2 = database.prepareStatement("insert into contents values (?, ?, ?, ?, ?, ?, ?);");
 			database.setAutoCommit(false);
 			time = System.currentTimeMillis();
 			for (MtgSet set : mtg.data.values()){
-				int counter = 0;
 				for (Card card : set.cards){
-					counter++;
 					prep.setString(1, card.id);
 					prep.setString(2, card.name);
 					prep.setString(3, card.manaCost);
@@ -90,16 +98,21 @@ public class Generator {
 					prep.setString(9, card.power);
 					prep.setString(10, card.toughness);
 					prep.setString(11, card.text);
-					prep.setString(12, card.rarity);
-					prep.setString(13, card.artist);
-					prep.setString(14, card.flavor);
-					prep.setString(15, (card.number != null) ? card.number : String.valueOf(counter));
-					prep.setString(16, card.layout);
-					prep.setString(17, set.code);
+					prep.setString(12, card.layout);		
 					prep.addBatch();
+					
+					prep2.setString(1, card.id);
+					prep2.setString(2, card.name);
+					prep2.setString(3, set.code);
+					prep2.setString(4, card.rarity);
+					prep2.setString(5, card.artist);
+					prep2.setString(6, card.flavor);
+					prep2.setString(7, card.number);
+					prep2.addBatch();
 				}
 			}
 			prep.executeBatch();
+			prep2.executeBatch();
 			database.commit();
 			System.out.println("Finished cards ("+ (System.currentTimeMillis() - time)/1000 +")");
 			

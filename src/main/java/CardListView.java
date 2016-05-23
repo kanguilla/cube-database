@@ -41,7 +41,7 @@ public class CardListView extends JPanel {
 	String ordering = "order by name asc";
 	String textFilter = "";
 	
-	public CardListView(MtgDatabase connection) {
+	public CardListView(final MtgDatabase connection) {
 		this.thisFrame = this;
 		this.setLayout(new GridBagLayout());
 		this.databaseConnection = connection;
