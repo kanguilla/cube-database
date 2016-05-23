@@ -2,6 +2,8 @@ package main.java;
 
 import java.util.List;
 
+import main.java.Card;
+
 public class MtgSet{
 	String name;
 	String code;

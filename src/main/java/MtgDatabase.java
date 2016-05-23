@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import main.gen.MtgSet;
+
 public class MtgDatabase {
 	
 	Connection database;

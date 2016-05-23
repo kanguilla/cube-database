@@ -3,29 +3,28 @@ package main.java;
 public class Card{
 		
 		//Identity attributes
-		String name;
+		String name; 
 		String manaCost;
 		String cmc;
 		String[] colors;
 		String[] colorIdentity;
 		String[] types;
 		String[] subtypes;
+		String layout;
 		
 		//Statistic attributes
 		String power;
 		String toughness;
 		String text;
-		String rarity;
 		
 		//Flavor attributes
 		String artist;
 		String flavor;
 		
 		//Location attributes
-		String id; //<-primary key
 		String number;
-		String layout;
 		String set;
+		String rarity;
 		
 		public Card(
 				String name, String manaCost, String cmc, 
@@ -39,7 +38,7 @@ public class Card{
 			this.types = types.split(",");
 			this.subtypes = subTypes.split(",");
 			this.power = power;this.toughness = toughness;this.text = text;
-			this.rarity = rarity;this.artist = artist;this.flavor = flavor;this.id = id;
+			this.rarity = rarity;this.artist = artist;this.flavor = flavor;
 			this.number = number;this.layout = layout;
 			this.set = set;
 		}
