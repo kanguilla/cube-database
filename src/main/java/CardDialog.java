@@ -25,17 +25,17 @@ public class CardDialog extends JDialog {
 	
 	public CardDialog(Card card, MtgDatabase connection){
 		super();
-		this.setSize(300, 600);
+		this.setSize(340, 500);
 		thisFrame = this;
 		this.connection = connection;
 		this.card = card;
-		this.getContentPane().setLayout(new MigLayout("fill", "[][]", "[][]"));
+		this.getContentPane().setLayout(new MigLayout("fill", "[50]","[80]"));
 		JLabel aLabel = new JLabel(card.getName());
 		aLabel.setFont(new Font("Arial", Font.BOLD, 20));
 		aLabel.setForeground(Color.white);
 		aLabel.setBackground(Color.black);
 		aLabel.setOpaque(true);
-		this.getContentPane().add(aLabel, "grow, cell 0 0 2 1");
+		//this.getContentPane().add(aLabel, "grow, cell 0 0 2 1");
 		
 		final JPanel details = new JPanel(new MigLayout("fill"));
         details.setBackground(CardListView.toRGB(card.getColors()));
@@ -75,7 +75,7 @@ public class CardDialog extends JDialog {
         	aLabel.setFont(font1);
 	        details.add(aLabel, "wrap");
         }
-        this.getContentPane().add(details, "grow, cell 0 1 2 1");
+        //this.getContentPane().add(details, "grow, cell 0 1 1 1");
         
         
         //get the image
@@ -92,7 +92,7 @@ public class CardDialog extends JDialog {
 			Image img = ImageIO.read(hc.getInputStream());
 
 			ImagePanel cardImage = new ImagePanel(img);
-			this.getContentPane().add(cardImage, "grow, cell 0 2 2 1");
+			this.getContentPane().add(cardImage, "grow");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
