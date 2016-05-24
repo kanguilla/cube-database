@@ -17,15 +17,6 @@ public class Card{
 		String toughness;
 		String text;
 		
-		//Set attributes
-		/*
-		String artist;
-		String flavor;
-		String number;
-		String set;
-		String rarity;
-		*/
-		
 		public Card(
 				String name, String manaCost, String cmc, 
 				String colors, String colorIdentity, 
