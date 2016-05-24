@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import main.gen.MtgSet;
-
 public class MtgDatabase {
 	
 	Connection database;
@@ -42,13 +40,7 @@ public class MtgDatabase {
 						rs.getString("power"),
 						rs.getString("toughness"),
 						rs.getString("text"),
-						rs.getString("rarity"),
-						rs.getString("artist"),
-						rs.getString("flavor"),
-						rs.getString("id"),
-						rs.getString("number"),
-						rs.getString("layout"),
-						rs.getString("mset"));
+						rs.getString("layout"));
 				cards.add(card);
 			}
 			rs.close();

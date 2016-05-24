@@ -1,5 +1,6 @@
 package main.gen;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MtgSet{
@@ -12,12 +13,23 @@ public class MtgSet{
 	String mkm_name;
 	int mkm_id;
 	List<Card> cards;
-
-	public MtgSet(String name, String code, String mcic, String releaseDate, String type){
-		this.name = name;
-		this.code = code;
-		this.magicCardsInfoCode = mcic;
-		this.releaseDate = releaseDate;
-		this.type = type;
+	
+	public void sortOrder(String order){
+		
+		Int
+		
+		List<Card> out = new ArrayList<Card>();
+		
+		for (int i = 0; i < order.length(); i++){
+			char c = order.charAt(i);
+			switch(c){
+			case 'w':
+				for (Card card : cards){
+					if (card.colors.length == 1 && card.colors[0] == white)
+				}
+			}
+		}
+		
+		cards = out;
 	}
 }

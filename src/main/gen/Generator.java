@@ -83,6 +83,7 @@ public class Generator {
 			database.setAutoCommit(false);
 			time = System.currentTimeMillis();
 			for (MtgSet set : mtg.data.values()){
+				int counter = 0;
 				for (Card card : set.cards){
 					prep.setString(1, card.name);
 					prep.setString(2, card.manaCost);
@@ -97,13 +98,14 @@ public class Generator {
 					prep.setString(11, card.layout);		
 					prep.addBatch();
 					
+					counter++;
 					prep2.setString(1, card.id);
 					prep2.setString(2, card.name);
 					prep2.setString(3, set.code);
 					prep2.setString(4, card.rarity);
 					prep2.setString(5, card.artist);
 					prep2.setString(6, card.flavor);
-					prep2.setString(7, card.number);
+					prep2.setString(7, (card.number != null) ? card.number : String.valueOf(counter));
 					prep2.addBatch();
 				}
 			}
