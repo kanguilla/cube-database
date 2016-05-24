@@ -67,8 +67,8 @@ public class Generator {
 			database.setAutoCommit(false);
 			for (MtgSet set : mtg.data.values()){
 				prep.setString(1, set.name);
-				prep.setString(2, set.code);
-				prep.setString(3, set.magicCardsInfoCode);
+				prep.setString(2, (set.code != null) ? set.code : set.magicCardsInfoCode.toUpperCase());
+				prep.setString(3, (set.magicCardsInfoCode != null) ? set.magicCardsInfoCode : set.code.toLowerCase());
 				prep.setString(4, set.releaseDate);
 				prep.setString(5, set.type);
 				prep.addBatch();
@@ -101,7 +101,7 @@ public class Generator {
 					counter++;
 					prep2.setString(1, card.id);
 					prep2.setString(2, card.name);
-					prep2.setString(3, set.code);
+					prep2.setString(3, (set.code != null) ? set.code : set.magicCardsInfoCode);
 					prep2.setString(4, card.rarity);
 					prep2.setString(5, card.artist);
 					prep2.setString(6, card.flavor);

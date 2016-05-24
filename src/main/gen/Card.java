@@ -26,4 +26,24 @@ public class Card{
 		String number;
 		String set;
 		String rarity;
+		
+		public boolean isType(String type){
+			if(types == null){
+				return false;
+			}
+			for (String s : types){
+				if (s.equalsIgnoreCase(type)){
+					return true;
+				}
+			}
+			if(subtypes == null){
+				return false;
+			}
+			for (String s : subtypes){
+				if (s.equalsIgnoreCase(type)){
+					return true;
+				}
+			}
+			return false;
+		}
 	}

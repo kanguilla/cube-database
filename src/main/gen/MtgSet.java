@@ -15,19 +15,81 @@ public class MtgSet{
 	List<Card> cards;
 	
 	public void sortOrder(String order){
-		
-		Int
+		System.out.println("loaded order " + order);
 		
 		List<Card> out = new ArrayList<Card>();
 		
 		for (int i = 0; i < order.length(); i++){
+			
 			char c = order.charAt(i);
+			System.out.println("  " + i + " - " + c);
 			switch(c){
 			case 'w':
 				for (Card card : cards){
-					if (card.colors.length == 1 && card.colors[0] == white)
+					if (card.colors != null && card.colors.length == 1 && card.colors[0].equals("White")){
+						out.add(card);
+						System.out.println("    " + card.name);
+					}
 				}
+				break;
+			case 'u':
+				for (Card card : cards){
+					if (card.colors != null && card.colors.length == 1 && card.colors[0].equals("Blue")){
+						out.add(card);
+						System.out.println("    " + card.name);
+					}
+				}
+				break;
+			case 'b':
+				for (Card card : cards){
+					if (card.colors != null && card.colors.length == 1 && card.colors[0].equals("Black")){
+						out.add(card);
+						System.out.println("    " + card.name);
+					}
+				}
+				break;
+			case 'r':
+				for (Card card : cards){
+					if (card.colors != null && card.colors.length == 1 && card.colors[0].equals("Red")){
+						out.add(card);
+						System.out.println("    " + card.name);
+					}
+				}
+				break;
+			case 'g':
+				for (Card card : cards){
+					if (card.colors != null && card.colors.length == 1 && card.colors[0].equals("Green")){
+						out.add(card);
+						System.out.println("    " + card.name);
+					}
+				}
+				break;
+			case 'm':
+				for (Card card : cards){
+					if (card.colors != null && card.colors.length > 1){
+						out.add(card);
+						System.out.println("    " + card.name);
+					}
+				}
+				break;
+			case 'c':
+				for (Card card : cards){
+					if (card.colors == null && !card.isType("Land")){
+						out.add(card);
+						System.out.println("    " + card.name);
+					}
+				}
+				break;
+			case 'l':
+				for (Card card : cards){
+					if (card.colors == null && card.isType("Land")){
+						out.add(card);
+						System.out.println("    " + card.name);
+					}
+				}
+				break;
 			}
+			
 		}
 		
 		cards = out;
