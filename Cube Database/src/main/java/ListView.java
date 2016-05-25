@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
@@ -246,29 +247,15 @@ public abstract class ListView extends JPanel{
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
 
 			super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-
-			String color = (String) table.getModel().getValueAt(row, 5);
-			setForeground(toRGB(color.split(" ")));
-			return this;
-		}
-		
-		/*
-		private static final long serialVersionUID = 1L;
-		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-			if (value == null)return this;
-			setText(value.toString());
-			if (isSelected || cellHasFocus) {
-				setOpaque(true);
-				setBackground(Color.lightGray);
-				setForeground(Color.black);
-				return this;
+			try {
+				String cls = databaseConnection.query("select colors from cards where name=\"" + (String) table.getModel().getValueAt(row, 1) + "\";").getString("colors");
+				setForeground(toRGB(cls.split(",")));
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-			setOpaque(false);
-			Card c = (Card) value;
-			setForeground(toRGB(c.getColors()));
+			
 			return this;
 		}
-		*/
 	}
 
 	class ColorBox extends JCheckBox {
