@@ -26,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -131,11 +132,8 @@ public abstract class ListView extends JPanel{
 		c.weighty = 0.0;
 		add(colorBar, c);
 		
-		CardTableModel tableModel = new CardTableModel(getCol(), 0);
-		for (Card card : cards) {
-			tableModel.addRow(getRow(card));
-			cardList.setModel(tableModel);
-		}
+		CardTableModel tableModel = new CardTableModel(getCol(), cards);
+		cardList.setModel(tableModel);
 		cardList = new JTable(tableModel);
 		cardList.getTableHeader().setBackground(Color.black);
 		cardList.getTableHeader().setForeground(Color.white);
@@ -314,17 +312,41 @@ public abstract class ListView extends JPanel{
 		
 	}
 	
-	class CardTableModel extends DefaultTableModel{
+	class CardTableModel extends AbstractTableModel{
 		private static final long serialVersionUID = 1L;
 		
 		List<Card> cards;
+		String[] col;
 		
-		public CardTableModel(String[] col, int i) {
-			super(col, i);
+		public CardTableModel(String[] col, List<Card> cards) {
+			this.col = col;
+			this.cards = cards;
 		}
 		@Override
 	    public boolean isCellEditable(int row, int column) {
 	       return false;
 	    }
+		@Override
+		public int getRowCount() {
+			return cards.size();
+		}
+		@Override
+		public int getColumnCount() {
+			return col.length;
+		}
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			Card c = cards.get(rowIndex);
+			
+			
+			
+			if (col[columnIndex].equalsIgnoreCase("name")){
+				
+			}else if (col[columnIndex].equalsIgnoreCase("name")){
+				
+			}
+			
+			return c;
+		}
 	}
 }
