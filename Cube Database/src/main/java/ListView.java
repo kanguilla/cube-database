@@ -13,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -315,6 +316,9 @@ public abstract class ListView extends JPanel{
 	
 	class CardTableModel extends DefaultTableModel{
 		private static final long serialVersionUID = 1L;
+		
+		List<Card> cards;
+		
 		public CardTableModel(String[] col, int i) {
 			super(col, i);
 		}
