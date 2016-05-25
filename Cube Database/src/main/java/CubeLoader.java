@@ -2,23 +2,26 @@ package main.java;
 
 import javax.swing.JFrame;
 
-public class CubeLoader extends JFrame{
-	private static final long serialVersionUID = 1L;
-	MtgDatabase connection;
+public class CubeLoader{
 	
+	static DatabaseMtg connection;
 	public static void main(String[] args) {
-		new CubeLoader();
+		JFrame mtgList = new JFrame();
+		connection = new DatabaseMtg();
+		CardListView mtgCardList = new CardListView(connection);
+		mtgCardList.update("select * from cards;");
+		mtgList.getContentPane().add(mtgCardList);
+		mtgList.setSize(500, 500);
+		mtgList.setVisible(true);
+		mtgList.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		JFrame cubeList = new JFrame();
+		connection = new DatabaseMtg();
+		CardListView cubeCardList = new CardListView(connection);
+		cubeCardList.update("select * from cards;");
+		cubeList.getContentPane().add(cubeCardList);
+		cubeList.setSize(500, 500);
+		cubeList.setVisible(true);
+		cubeList.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-	
-	public CubeLoader(){
-		connection = new MtgDatabase();
-		CardListView cardList = new CardListView(connection);
-		cardList.update("select * from cards;");
-		this.getContentPane().add(cardList);
-		this.setSize(500, 500);
-		this.setVisible(true);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-	}
-
 }

@@ -17,9 +17,9 @@ public class CardDialog extends JDialog {
 	Card card;
 	
 	JDialog thisFrame;
-	MtgDatabase connection;
+	DatabaseMtg connection;
 	
-	public CardDialog(Card card, MtgDatabase connection){
+	public CardDialog(Card card, DatabaseMtg connection){
 		super();
 		this.setSize(340, 500);
 		thisFrame = this;

@@ -1,6 +1,8 @@
 package main.gen;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MtgSet{
@@ -18,6 +20,20 @@ public class MtgSet{
 		System.out.println("loaded order " + order);
 		
 		List<Card> out = new ArrayList<Card>();
+		
+		if(order.equalsIgnoreCase("alpha")){
+			Collections.sort(cards, new Comparator<Card>() {
+		        @Override
+		        public int compare(Card s1, Card s2) {
+		            return s1.name.compareToIgnoreCase(s2.name);
+		        }
+		    });
+			for (Card c : cards){
+				System.out.print("    " + c.name);
+			}
+			return;
+		}
+		
 		
 		for (int i = 0; i < order.length(); i++){
 			

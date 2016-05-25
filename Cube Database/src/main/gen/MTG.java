@@ -39,6 +39,7 @@ public class MTG {
 		data.get("5ED").sortOrder("bugrwmcl");
 		data.get("ICE").sortOrder("bugrwclm");
 		data.get("ALL").sortOrder("bugrwclm");
+		data.get("S00").sortOrder("alpha");
 	}
 	public List<Card> getCards(String setCode){
 		return data.get(setCode).cards;

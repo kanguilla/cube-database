@@ -34,14 +34,14 @@ public class CardListView extends JPanel {
 	private JTable cardList;
 	private JButton cardFilter;
 	private Font uif = new Font("Arial", Font.BOLD, 14);
-	private MtgDatabase databaseConnection;
+	private DatabaseMtg databaseConnection;
 	private JTextField cardFilterText;
 	private Set<String> args = new TreeSet<String>();
 	String prototype = "select * from cards ";
 	String ordering = "order by name asc";
 	String textFilter = "";
 	
-	public CardListView(final MtgDatabase connection) {
+	public CardListView(final DatabaseMtg connection) {
 		this.thisFrame = this;
 		this.setLayout(new GridBagLayout());
 		this.databaseConnection = connection;
