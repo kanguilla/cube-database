@@ -339,13 +339,6 @@ public abstract class ListView extends JPanel{
 			Card c = cards.get(rowIndex);
 			
 			
-			
-			if (col[columnIndex].equalsIgnoreCase("name")){
-				
-			}else if (col[columnIndex].equalsIgnoreCase("name")){
-				
-			}
-			
 			return c;
 		}
 	}
