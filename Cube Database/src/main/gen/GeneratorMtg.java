@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class Generator {
+public class GeneratorMtg {
 
 	public static String name = "mtg.db";
 	
