@@ -308,7 +308,7 @@ public abstract class ListView extends JPanel{
 		
 	}
 	
-	class CardTableModel extends AbstractTableModel{
+	class CardTableModel extends DefaultTableModel{
 		private static final long serialVersionUID = 1L;
 		
 		List<Card> cards;
@@ -320,8 +320,25 @@ public abstract class ListView extends JPanel{
 		}
 
 		public void addRow(Card c) { 
-			cards.add(c); 
-			fireTableRowsInserted(cards.size() - 1, cards.size() - 1);
+			
+			String[] data = new String[col.length];
+			
+			for (int i = 0; i < col.length; i++){
+				if(col[i].equalsIgnoreCase("name")){
+					data[i] = c.getName();
+				}else if(col[i].equalsIgnoreCase("cost")){
+					data[i] = c.getCost();
+				}else if(col[i].equalsIgnoreCase("colors")){
+					data[i] = c.getName();
+				}else if(col[i].equalsIgnoreCase("name")){
+					data[i] = c.getName();
+				}else if(col[i].equalsIgnoreCase("name")){
+					data[i] = c.getName();
+				}else if(col[i].equalsIgnoreCase("name")){
+					data[i] = c.getName();
+				}
+			}
+			this.addRow(data);
 		} 
 		@Override
 	    public boolean isCellEditable(int row, int column) {
