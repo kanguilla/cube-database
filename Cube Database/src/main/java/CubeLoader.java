@@ -14,6 +14,7 @@ public class CubeLoader{
 		mtgList.setVisible(true);
 		mtgList.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		/*
 		JFrame cubeList = new JFrame("Cube List");
 		DatabaseCube c2 = new DatabaseCube();
 		ListView cubeCardList = new CubeListView(c1, c2);
@@ -22,5 +23,6 @@ public class CubeLoader{
 		cubeList.setSize(500, 500);
 		cubeList.setVisible(true);
 		cubeList.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		*/
 	}
 }

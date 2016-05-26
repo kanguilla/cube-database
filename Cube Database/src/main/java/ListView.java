@@ -133,7 +133,6 @@ public abstract class ListView extends JPanel{
 		add(colorBar, c);
 		
 		CardTableModel tableModel = new CardTableModel(getCol(), cards);
-		cardList.setModel(tableModel);
 		cardList = new JTable(tableModel);
 		cardList.getTableHeader().setBackground(Color.black);
 		cardList.getTableHeader().setForeground(Color.white);
@@ -189,20 +188,17 @@ public abstract class ListView extends JPanel{
 		System.out.println("Search as \"" + sql + "\"");
 		cards = databaseConnection.queryCards(sql);
 		this.cards = cards;
-		CardTableModel tableModel = new CardTableModel(getCol(), 0);
+		CardTableModel tableModel = new CardTableModel(getCol(), cards);
 		for (Card card : cards) {
-			tableModel.addRow(getRow(card));
+			tableModel.addRow(card);
 			cardList.setModel(tableModel);
 		}
 	}
 	
 	public void update(String sql) {	
 		this.cards = databaseConnection.queryCards(sql);
-		CardTableModel tableModel = new CardTableModel(getCol(), 0);
-		for (Card card : cards) {
-			tableModel.addRow(getRow(card));
-			cardList.setModel(tableModel);
-		}
+		CardTableModel tableModel = new CardTableModel(getCol(), cards);
+		cardList.setModel(tableModel);
 	}
 
 	public void addColorFilter(String color){
@@ -322,6 +318,11 @@ public abstract class ListView extends JPanel{
 			this.col = col;
 			this.cards = cards;
 		}
+
+		public void addRow(Card c) { 
+			cards.add(c); 
+			fireTableRowsInserted(cards.size() - 1, cards.size() - 1);
+		} 
 		@Override
 	    public boolean isCellEditable(int row, int column) {
 	       return false;
@@ -337,8 +338,6 @@ public abstract class ListView extends JPanel{
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			Card c = cards.get(rowIndex);
-			
-			
 			return c;
 		}
 	}
