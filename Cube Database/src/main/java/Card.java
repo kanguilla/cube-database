@@ -39,5 +39,28 @@ public class Card{
 		public String getText(){return text;}
 		public String getPower(){return power;}
 		public String getToughness(){return toughness;}
-
+		public String getPT() {
+			if(this.power == null || this.toughness == null){
+				return "";
+			}
+			return (this.power + "/" + this.toughness);}
+		public String getColorString(){
+			if (colors == null || colors.length == 0){
+				return "";
+			}
+			String out = "";
+			for (String s : colors){
+				if(s.length() > 0){
+					switch(s){
+					case "Blue":
+						out+="U";
+						break;
+					default:
+						out+= s.toUpperCase().charAt(0);
+					}
+				}
+			}
+			return out;
+		}
+		
 	}
