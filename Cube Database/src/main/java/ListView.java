@@ -148,7 +148,7 @@ public abstract class ListView extends JPanel{
 					int index = table.getSelectedRow();
 					Card c = cards.get(index);
 					CardDialog dialog = new CardDialog(c, connection);
-					dialog.setVisible(true);
+					//dialog.setVisible(true);
 				}
 			}});
 		JScrollPane scrollPane = new JScrollPane(cardList, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
