@@ -19,11 +19,17 @@ import javafx.stage.Stage;
 public class CardListView extends Stage{
 	
 	DatabaseMtg connection = new DatabaseMtg();
+	DatabaseCube cube;
 	ObservableList<Card> data = FXCollections.observableArrayList();
 	
 	Label title;
 	TableView<Card> table = new TableView<Card>();
-    
+
+	public CardListView(DatabaseMtg dm, DatabaseCube dc){
+		this(dm);
+		this.cube = dc;
+	}
+	
     public CardListView(DatabaseMtg dm) {
     	this.connection = dm;
     	for (Card c : connection.queryCards("select * from cards;")){
