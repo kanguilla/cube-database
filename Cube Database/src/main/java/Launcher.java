@@ -11,5 +11,6 @@ public class Launcher extends Application{
     @Override
     public void start(Stage stage) {
     	new CardListView(new DatabaseMtg());
+    	new CardListView(new DatabaseMtg(), new DatabaseCube());
     }
 }

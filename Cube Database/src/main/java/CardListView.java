@@ -1,4 +1,8 @@
 package main.java;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,24 +30,43 @@ public class CardListView extends Stage{
 	TableView<Card> table = new TableView<Card>();
 
 	public CardListView(DatabaseMtg dm, DatabaseCube dc){
-		this(dm);
+		this.connection = dm;
 		this.cube = dc;
+		setTitle("Cube");
+ 		ArrayList<String> cardNames = new ArrayList<String>();
+     	try {
+     		ResultSet rs = dc.query("select name from cards;");
+				while(rs.next()){
+					cardNames.add(rs.getString("name"));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+     	for (String s : cardNames){
+     		for (Card c : connection.queryCards("select * from cards where name like \"%" + s + "%\";")){
+         		data.add(c);
+         	}
+     	}
+     	create();
 	}
 	
     public CardListView(DatabaseMtg dm) {
     	this.connection = dm;
-    	for (Card c : connection.queryCards("select * from cards;")){
-    		data.add(c);
-    	}
-    	
-        Scene scene = new Scene(new Group());
         setTitle("Hedron");
+        for (Card c : connection.queryCards("select * from cards;")){
+        	data.add(c);
+    	}
+        create();
+    }
+    
+    public void create(){
+    	Scene scene = new Scene(new Group());
         setWidth(450);
         setHeight(500);
  
         Label title = new Label("Cards");
         title.setFont(new Font("Arial", 20));
- 
+        
         TextField textField = new TextField ();
         textField.setPromptText("Search");
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
