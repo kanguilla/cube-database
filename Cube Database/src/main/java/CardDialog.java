@@ -1,12 +1,10 @@
 package main.java;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
@@ -28,10 +26,7 @@ public class CardDialog extends Stage{
 		VBox layout = new VBox();
 		
 		Text title = new Text(card.getName());
-		layout.getChildren().add(title);
-		
 		TabPane tabPane = new TabPane();
-		
 		
 		try {
 			ResultSet rs = connection.query("select setName, mciCode, number from contents join sets on sets.code=contents.setName where cardName=\"" + card.name + "\";");
@@ -41,24 +36,30 @@ public class CardDialog extends Stage{
 			    String setName = rs.getString("setName");
 				System.out.println("   " + card.name + "...");
 				
-				Tab tab = new Tab(setName);
+				CardTab tab = new CardTab(setName, mciCode, number);
 				tab.setClosable(false);
 				tabPane.getTabs().add(tab);
+				if(tab.isSelected()){
+					tab.setContent(new ImageView(loadImage(tab.mciCode, tab.number)));
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		
+		
 		tabPane.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
 		    @Override
 		    public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
-		        Tab t = tabPane.getTabs().get(newValue.intValue());
+		    	CardTab t = (CardTab) tabPane.getTabs().get(newValue.intValue());
 		    	if (t.getContent() == null){
-					t.setContent(new ImageView(loadImage(mciCode, number)));
+					t.setContent(new ImageView(loadImage(t.mciCode, t.number)));
 		        }
 		    }
 		}); 
 		
-		layout.getChildren().add(tabPane);
+		layout.getChildren().addAll(title, tabPane);
 		
 		Scene dialogScene = new Scene(layout, 300, 480);
 		setScene(dialogScene);
@@ -81,6 +82,18 @@ public class CardDialog extends Stage{
 		}
 		return null;
 		
+	}
+	
+	
+	class CardTab extends Tab{
+		
+		String mciCode, number;
+		
+		public CardTab(String s, String mciCode, String number){
+			super(s);
+			this.mciCode = mciCode;
+			this.number = number;
+		}
 	}
 
 }
