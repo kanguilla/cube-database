@@ -20,7 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-public class CardListView extends Stage{
+public class CardListView extends Scene{
 	
 	DatabaseMtg connection = new DatabaseMtg();
 	DatabaseCube cube;
@@ -30,40 +30,30 @@ public class CardListView extends Stage{
 	TableView<Card> table = new TableView<Card>();
 
 	public CardListView(DatabaseMtg dm, DatabaseCube dc){
-		this.connection = dm;
-		this.cube = dc;
-		setTitle("Cube");
- 		ArrayList<String> cardNames = new ArrayList<String>();
-     	try {
-     		ResultSet rs = dc.query("select name from cards;");
-				while(rs.next()){
-					cardNames.add(rs.getString("name"));
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-     	for (String s : cardNames){
-     		for (Card c : connection.queryCards("select * from cards where name like \"%" + s + "%\";")){
-         		data.add(c);
-         	}
-     	}
-     	create();
-	}
-	
-    public CardListView(DatabaseMtg dm) {
+//		super(new Group());
+//		this.connection = dm;
+//		this.cube = dc;
+// 		ArrayList<String> cardNames = new ArrayList<String>();
+//     	try {
+//     		ResultSet rs = dc.query("select name from cards;");
+//				while(rs.next()){
+//					cardNames.add(rs.getString("name"));
+//				}
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//     	for (String s : cardNames){
+//     		for (Card c : connection.queryCards("select * from cards where name like \"%" + s + "%\";")){
+//         		data.add(c);
+//         	}
+//     	}
+
+    	super(new Group());
     	this.connection = dm;
-        setTitle("Hedron");
         for (Card c : connection.queryCards("select * from cards;")){
         	data.add(c);
     	}
-        create();
-    }
-    
-    public void create(){
-    	Scene scene = new Scene(new Group());
-        setWidth(450);
-        setHeight(500);
- 
+
         Label title = new Label("Cards");
         title.setFont(new Font("Arial", 20));
         
@@ -147,9 +137,6 @@ public class CardListView extends Stage{
         vbox.setPadding(new Insets(10, 0, 0, 10));
         vbox.getChildren().addAll(title, textField, table);
  
-        ((Group) scene.getRoot()).getChildren().addAll(vbox);
- 
-        setScene(scene);
-        show();
+        ((Group) getRoot()).getChildren().addAll(vbox);
     }
 }

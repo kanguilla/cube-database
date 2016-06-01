@@ -17,6 +17,8 @@ public class Card{
 		String toughness;
 		String text;
 		
+		//Context attributes
+		
 		public Card(
 				String name, String manaCost, String cmc, 
 				String colors, String colorIdentity, 

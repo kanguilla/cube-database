@@ -79,4 +79,17 @@ public class DatabaseCube {
 		}
 		return null;
 	}
+	
+	public ArrayList<String> getNames(){
+		ArrayList<String> cardNames = new ArrayList<String>();
+		try {
+     		ResultSet rs = query("select name from cards;");
+				while(rs.next()){
+					cardNames.add(rs.getString("name"));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		return cardNames;
+	}
 }
