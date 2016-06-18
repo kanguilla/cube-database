@@ -29,7 +29,7 @@ public class CardListView extends Scene{
 	Label title;
 	TableView<Card> table = new TableView<Card>();
 
-	public CardListView(DatabaseMtg dm, DatabaseCube dc){
+	public CardListView(DatabaseMtg dm){
 //		super(new Group());
 //		this.connection = dm;
 //		this.cube = dc;

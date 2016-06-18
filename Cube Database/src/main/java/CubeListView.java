@@ -1,12 +1,5 @@
 package main.java;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValueBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -18,10 +11,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
 
 public class CubeListView extends Scene{
 	
@@ -30,17 +21,16 @@ public class CubeListView extends Scene{
 	ObservableList<CardEntry> data = FXCollections.observableArrayList();
 	
 	Label title;
-	TableView<Card> table = new TableView<Card>();
+	TableView<CardEntry> table = new TableView<CardEntry>();
 
 	public CubeListView(DatabaseMtg dm, DatabaseCube dc){
 		super(new Group());
 		this.connection = dm;
 		this.cube = dc;
-     	
-     	for (String s : dc.getNames()){
-     		data.add(connection.queryCards("select * from cards where name like \"%" + s + "%\";").get(0));
-     	}
-
+        table.setEditable(false);
+        
+   		data.add(cube.queryCards("select * from cards;").get(0));
+   		
         Label title = new Label("Cards");
         title.setFont(new Font("Arial", 20));
         
@@ -48,14 +38,11 @@ public class CubeListView extends Scene{
         textField.setPromptText("Search");
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
         	data = FXCollections.observableArrayList();
-        	for (Card c : connection.queryCards("select * from cards where name like \"%" + newValue + "%\";")){
+        	for (CardEntry c : cube.queryCards("select * from cards where name like \"%" + newValue + "%\";")){
         		data.add(c);
-        		
         	}
         	table.setItems(data);
         });
-        
-        table.setEditable(false);
         
         TableColumn<CardEntry, String> nameCol = new TableColumn<CardEntry, String>("Name");
         nameCol.setMinWidth(100);
@@ -66,16 +53,16 @@ public class CubeListView extends Scene{
         setCol.setMinWidth(100);
         setCol.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().set));
         
-        TableColumn<CardEntry, Integer> numCol = new TableColumn<CardEntry, Integer>("Count");
+        TableColumn<CardEntry, Number> numCol = new TableColumn<CardEntry, Number>("Count");
         numCol.setMinWidth(100);
-        numCol.setCellValueFactory();
+        numCol.setCellValueFactory(c-> c.getValue().getQuantityProperty());
         
-        TableColumn<Card, String> colorCol = new TableColumn<Card, String>("Color");
+        TableColumn<CardEntry, String> colorCol = new TableColumn<CardEntry, String>("Color");
         colorCol.setMinWidth(100);
-        colorCol.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().getColorString()));
+        colorCol.setCellValueFactory(c-> new SimpleStringProperty(c.getValue().card.getColorString()));
         
         colorCol.setCellFactory(column -> {
-            return new TableCell<Card, String>(){
+            return new TableCell<CardEntry, String>(){
             	@Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
@@ -107,13 +94,13 @@ public class CubeListView extends Scene{
         
         
         table.setItems(data);
-        table.getColumns().addAll(nameCol, costCol, ptCol, colorCol);
+        table.getColumns().addAll(nameCol, setCol, numCol, colorCol);
         
         table.setRowFactory( tv -> {
-			TableRow<Card> row = new TableRow<>();
+			TableRow<CardEntry> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
-					new CardDialog(row.getItem(), connection).show();
+					new CardDialog(row.getItem().card, connection).show();
 				}
 			});
             return row ;
@@ -126,21 +113,4 @@ public class CubeListView extends Scene{
  
         ((Group) getRoot()).getChildren().addAll(vbox);
     }
-	
-	public class CardEntry{
-		Card card;
-		String set;
-		int quantity = 0;
-		public CardEntry(Card c, String set, int quantity){
-			this.card = c;
-			this.set = set;
-			this.quantity = quantity;
-		}
-		
-		public SimpleIntegerProperty getQuantityProperty(){
-			SimpleIntegerProperty si = new SimpleIntegerProperty();
-			si.set(this.quantity);
-			return si;
-		}
-	}
 }

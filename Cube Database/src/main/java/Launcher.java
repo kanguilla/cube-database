@@ -13,7 +13,7 @@ public class Launcher extends Application{
  
     @Override
     public void start(Stage stage) {
-        stage.setScene(new CardListView(dm, dc));
+        stage.setScene(new CardListView(dm));
         stage.show();
     	
         Stage cubeStage = new Stage();

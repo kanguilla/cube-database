@@ -9,14 +9,16 @@ import java.util.ArrayList;
 
 public class DatabaseCube {
 	
-	Connection database;
+	DatabaseMtg mtg;
+	Connection cube;
 	Statement stat;
 	
 	public DatabaseCube(){
 		try {
 			Class.forName("org.sqlite.JDBC");
-			database = DriverManager.getConnection("jdbc:sqlite:cube.db");
-			stat = database.createStatement();
+			cube = DriverManager.getConnection("jdbc:sqlite:cube.db");
+			mtg = new DatabaseMtg();
+			stat = cube.createStatement();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -24,50 +26,23 @@ public class DatabaseCube {
 		}
 	}
 	
-	public ArrayList<Card> queryCards(String sql) {
-		ArrayList<Card> cards = new ArrayList<Card>();
+	public ArrayList<CardEntry> queryCards(String sql) {
+		ArrayList<CardEntry> cards = new ArrayList<CardEntry>();
 		try {
 			ResultSet rs = stat.executeQuery(sql);
 			while (rs.next()) {
-				Card card = new Card(
-						rs.getString("name"),
-						rs.getString("manaCost"),
-						rs.getString("cmc"),
-						rs.getString("colors"),
-						rs.getString("colorIdentity"),
-						rs.getString("types"),
-						rs.getString("subtypes"),
-						rs.getString("power"),
-						rs.getString("toughness"),
-						rs.getString("text"),
-						rs.getString("layout"));
-				cards.add(card);
+				Card card = mtg.queryCards("select * from cards where name=\"" +rs.getString("name")+ "\";").get(0);
+				CardEntry cardEntry = new CardEntry(
+						card,
+						rs.getString("setCode"),
+						rs.getInt("quantity"));
+				cards.add(cardEntry);
 			}
 			rs.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return cards;
-	}
-	
-	public ArrayList<MtgSet> querySets(String sql) {
-		ArrayList<MtgSet> sets = new ArrayList<MtgSet>();
-		try {
-			ResultSet rs = stat.executeQuery(sql);
-			while (rs.next()) {
-				MtgSet set = new MtgSet(
-						rs.getString("name"),
-						rs.getString("code"),
-						rs.getString("mciCode"),
-						rs.getString("release"),
-						rs.getString("type"));
-				sets.add(set);
-			}
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return sets;
 	}
 	
 	public ResultSet query(String sql) {

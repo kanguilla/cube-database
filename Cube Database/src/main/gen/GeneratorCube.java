@@ -27,6 +27,11 @@ public class GeneratorCube {
 					+ "quantity int);");
 			System.out.println("Created card table ("+ (System.currentTimeMillis() - time)/1000 +")");
 			
+			//Sample Data
+			time = System.currentTimeMillis();
+			stat.execute("insert into cards (id, name, setCode, quantity) values ('1', 'Battlewise Hoplite', 'THS', 1);");
+			System.out.println("Added sample data( "+ (System.currentTimeMillis() - time)/1000 +")");
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
