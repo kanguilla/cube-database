@@ -21,15 +21,14 @@ public class GeneratorCube {
 			time = System.currentTimeMillis();
 			stat.executeUpdate("drop table if exists cards;");
 			stat.executeUpdate("create table if not exists cards("
-					+ "id varchar (40) primary key not NULL,"
-					+ "name varchar(50),"
+					+ "name varchar(50) primary key not NULL,"
 					+ "setCode varchar(10),"
 					+ "quantity int);");
 			System.out.println("Created card table ("+ (System.currentTimeMillis() - time)/1000 +")");
 			
 			//Sample Data
 			time = System.currentTimeMillis();
-			stat.execute("insert into cards (id, name, setCode, quantity) values ('1', 'Battlewise Hoplite', 'THS', 1);");
+			stat.execute("insert into cards (name, setCode, quantity) values ('Battlewise Hoplite', 'THS', 1);");
 			System.out.println("Added sample data( "+ (System.currentTimeMillis() - time)/1000 +")");
 			
 		} catch (SQLException e) {

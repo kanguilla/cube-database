@@ -1,56 +1,37 @@
 package main.java;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
 
 public class CardListView extends Scene{
 	
-	DatabaseMtg connection = new DatabaseMtg();
-	DatabaseCube cube;
+	Database cube;
 	ObservableList<Card> data = FXCollections.observableArrayList();
 	
 	Label title;
 	TableView<Card> table = new TableView<Card>();
 
-	public CardListView(DatabaseMtg dm){
-//		super(new Group());
-//		this.connection = dm;
-//		this.cube = dc;
-// 		ArrayList<String> cardNames = new ArrayList<String>();
-//     	try {
-//     		ResultSet rs = dc.query("select name from cards;");
-//				while(rs.next()){
-//					cardNames.add(rs.getString("name"));
-//				}
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//			}
-//     	for (String s : cardNames){
-//     		for (Card c : connection.queryCards("select * from cards where name like \"%" + s + "%\";")){
-//         		data.add(c);
-//         	}
-//     	}
-
+	public CardListView(Database dm){
     	super(new Group());
-    	this.connection = dm;
-        for (Card c : connection.queryCards("select * from cards;")){
+    	this.cube = dm;
+        for (Card c : cube.mtg.queryCards("select * from cards;")){
         	data.add(c);
     	}
 
@@ -61,7 +42,7 @@ public class CardListView extends Scene{
         textField.setPromptText("Search");
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
         	data = FXCollections.observableArrayList();
-        	for (Card c : connection.queryCards("select * from cards where name like \"%" + newValue + "%\";")){
+        	for (Card c : cube.mtg.queryCards("select * from cards where name like \"%" + newValue + "%\";")){
         		data.add(c);
         		
         	}
@@ -126,7 +107,21 @@ public class CardListView extends Scene{
 			TableRow<Card> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
-					new CardDialog(row.getItem(), connection).show();
+					new CardDialog(row.getItem(), cube).show();
+				}else if (event.getButton() == MouseButton.SECONDARY){
+					
+					
+					ContextMenu menu = new ContextMenu();
+					MenuItem menuInspect = new MenuItem("Inspect");
+					menuInspect.setOnAction(new EventHandler<ActionEvent>() {
+					    @Override
+					    public void handle(ActionEvent event) {
+					    	new CardDialog(row.getItem(), cube).show();
+					    }
+					});
+					
+					menu.getItems().add(menuInspect);
+					menu.show(row, event.getScreenX(), event.getScreenY());
 				}
 			});
             return row ;

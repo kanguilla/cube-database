@@ -16,16 +16,14 @@ import javafx.scene.text.Font;
 
 public class CubeListView extends Scene{
 	
-	DatabaseMtg connection = new DatabaseMtg();
-	DatabaseCube cube;
+	Database cube;
 	ObservableList<CardEntry> data = FXCollections.observableArrayList();
 	
 	Label title;
 	TableView<CardEntry> table = new TableView<CardEntry>();
 
-	public CubeListView(DatabaseMtg dm, DatabaseCube dc){
+	public CubeListView(Database dc){
 		super(new Group());
-		this.connection = dm;
 		this.cube = dc;
         table.setEditable(false);
         
@@ -100,7 +98,7 @@ public class CubeListView extends Scene{
 			TableRow<CardEntry> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
-					new CardDialog(row.getItem().card, connection).show();
+					new CardDialog(row.getItem().card, cube).show();
 				}
 			});
             return row ;

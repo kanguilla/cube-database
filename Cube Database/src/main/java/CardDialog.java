@@ -8,10 +8,13 @@ import java.sql.SQLException;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -19,7 +22,7 @@ import javafx.stage.Stage;
 
 public class CardDialog extends Stage{
 
-	public CardDialog(Card card, DatabaseMtg connection) {
+	public CardDialog(Card card, Database connection) {
 		super();
 		this.initModality(Modality.APPLICATION_MODAL);
 		this.setResizable(false);
@@ -29,7 +32,7 @@ public class CardDialog extends Stage{
 		TabPane tabPane = new TabPane();
 		
 		try {
-			ResultSet rs = connection.query("select setName, mciCode, number from contents join sets on sets.code=contents.setName where cardName=\"" + card.name + "\";");
+			ResultSet rs = connection.mtg.query("select setName, mciCode, number from contents join sets on sets.code=contents.setName where cardName=\"" + card.name + "\";");
 			while(rs.next()){
 				String mciCode = rs.getString("mciCode");
 			    String number = rs.getString("number");
@@ -40,7 +43,10 @@ public class CardDialog extends Stage{
 				tab.setClosable(false);
 				tabPane.getTabs().add(tab);
 				if(tab.isSelected()){
-					tab.setContent(new ImageView(loadImage(tab.mciCode, tab.number)));
+					GridPane g = new GridPane();
+					g.add(new ImageView(loadImage(tab.mciCode, tab.number)), 0, 0);
+					g.add(new Button("Add " + tab.mciCode + " edition"), 0, 1);
+					tab.setContent(g);
 				}
 			}
 		} catch (SQLException e) {
@@ -61,7 +67,7 @@ public class CardDialog extends Stage{
 		
 		layout.getChildren().addAll(title, tabPane);
 		
-		Scene dialogScene = new Scene(layout, 300, 480);
+		Scene dialogScene = new Scene(layout, 300, 520);
 		setScene(dialogScene);
 
 		

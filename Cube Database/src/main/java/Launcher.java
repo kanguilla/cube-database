@@ -4,8 +4,7 @@ import javafx.stage.Stage;
 
 public class Launcher extends Application{
     
-	DatabaseMtg dm = new DatabaseMtg();
-	DatabaseCube dc = new DatabaseCube();
+	Database dc = new Database();
 	
     public static void main(String[] args) {
         launch(args);
@@ -13,11 +12,11 @@ public class Launcher extends Application{
  
     @Override
     public void start(Stage stage) {
-        stage.setScene(new CardListView(dm));
+        stage.setScene(new CardListView(dc));
         stage.show();
     	
         Stage cubeStage = new Stage();
-        cubeStage.setScene(new CubeListView(dm, dc));
+        cubeStage.setScene(new CubeListView(dc));
         cubeStage.show();
     }
 }
