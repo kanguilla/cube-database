@@ -11,15 +11,15 @@ import java.util.ArrayList;
 public class Database {
 	
 	DatabaseMtg mtg;
-	Connection connection;
+	Connection cube;
 	Statement stat;
 	
 	public Database(){
 		try {
 			Class.forName("org.sqlite.JDBC");
-			connection = DriverManager.getConnection("jdbc:sqlite:cube.db");
+			cube = DriverManager.getConnection("jdbc:sqlite:cube.db");
 			mtg = new DatabaseMtg();
-			stat = connection.createStatement();
+			stat = cube.createStatement();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -58,10 +58,11 @@ public class Database {
 
 	public boolean addCard(Card card, String setCode, int num){
 		try {
-			PreparedStatement ps = connection.prepareStatement("insert into cards (name, setCode, quantity) values (?, ?, ?, ?);");
+			PreparedStatement ps = cube.prepareStatement("insert into cards (name, setCode, quantity) values (?, ?, ?);");
 			ps.setString(1, card.name);
 			ps.setString(2, setCode);
 			ps.setInt(3, num);
+			ps.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;

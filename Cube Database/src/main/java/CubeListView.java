@@ -27,7 +27,7 @@ public class CubeListView extends Scene{
 		this.cube = dc;
         table.setEditable(false);
         
-   		data.add(cube.queryCards("select * from cards;").get(0));
+   		data.addAll(cube.queryCards("select * from cards;"));
    		
         Label title = new Label("Cards");
         title.setFont(new Font("Arial", 20));

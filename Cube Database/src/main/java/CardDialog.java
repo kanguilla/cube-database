@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
@@ -39,13 +41,19 @@ public class CardDialog extends Stage{
 			    String setName = rs.getString("setName");
 				System.out.println("   " + card.name + "...");
 				
-				CardTab tab = new CardTab(setName, mciCode, number);
+				CardTab tab = new CardTab(card, setName, mciCode, number);
 				tab.setClosable(false);
 				tabPane.getTabs().add(tab);
 				if(tab.isSelected()){
 					GridPane g = new GridPane();
 					g.add(new ImageView(loadImage(tab.mciCode, tab.number)), 0, 0);
-					g.add(new Button("Add " + tab.mciCode + " edition"), 0, 1);
+					Button btnAdd = new Button("Add this edition");
+					btnAdd.setOnAction(new EventHandler<ActionEvent>() {
+					    @Override public void handle(ActionEvent e) {
+					        connection.addCard(tab.c, tab.s, 1);
+					    }
+					});
+					g.add(btnAdd, 0, 1);
 					tab.setContent(g);
 				}
 			}
@@ -58,9 +66,18 @@ public class CardDialog extends Stage{
 		tabPane.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
 		    @Override
 		    public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
-		    	CardTab t = (CardTab) tabPane.getTabs().get(newValue.intValue());
-		    	if (t.getContent() == null){
-					t.setContent(new ImageView(loadImage(t.mciCode, t.number)));
+		    	CardTab tab = (CardTab) tabPane.getTabs().get(newValue.intValue());
+		    	if (tab.getContent() == null){
+		    		GridPane g = new GridPane();
+					g.add(new ImageView(loadImage(tab.mciCode, tab.number)), 0, 0);
+					Button btnAdd = new Button("Add this edition");
+					btnAdd.setOnAction(new EventHandler<ActionEvent>() {
+					    @Override public void handle(ActionEvent e) {
+					        connection.addCard(tab.c, tab.s, 1);
+					    }
+					});
+					g.add(btnAdd, 0, 1);
+					tab.setContent(g);
 		        }
 		    }
 		}); 
@@ -93,10 +110,13 @@ public class CardDialog extends Stage{
 	
 	class CardTab extends Tab{
 		
-		String mciCode, number;
+		String mciCode, number, s;
+		Card c;
 		
-		public CardTab(String s, String mciCode, String number){
+		public CardTab(Card c, String s, String mciCode, String number){
 			super(s);
+			this.s = s;
+			this.c = c;
 			this.mciCode = mciCode;
 			this.number = number;
 		}
