@@ -16,7 +16,7 @@ import javafx.scene.text.Font;
 
 public class CubeListView extends Scene{
 	
-	Database cube;
+	Database database;
 	ObservableList<CardEntry> data = FXCollections.observableArrayList();
 	
 	Label title;
@@ -24,10 +24,10 @@ public class CubeListView extends Scene{
 
 	public CubeListView(Database dc){
 		super(new Group());
-		this.cube = dc;
+		this.database = dc;
         table.setEditable(false);
         
-   		data.addAll(cube.queryCards("select * from cards;"));
+   		data.addAll(database.getCubeCards("select * from cards;"));
    		
         Label title = new Label("Cards");
         title.setFont(new Font("Arial", 20));
@@ -36,7 +36,7 @@ public class CubeListView extends Scene{
         textField.setPromptText("Search");
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
         	data = FXCollections.observableArrayList();
-        	for (CardEntry c : cube.queryCards("select * from cards where name like \"%" + newValue + "%\";")){
+        	for (CardEntry c : database.getCubeCards("select * from cards where name like \"%" + newValue + "%\";")){
         		data.add(c);
         	}
         	table.setItems(data);
@@ -98,7 +98,7 @@ public class CubeListView extends Scene{
 			TableRow<CardEntry> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
-					new CardDialog(row.getItem().card, cube).show();
+					new CardDialog(row.getItem().card, database).show();
 				}
 			});
             return row ;

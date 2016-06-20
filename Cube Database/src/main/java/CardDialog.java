@@ -15,7 +15,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -24,7 +23,7 @@ import javafx.stage.Stage;
 
 public class CardDialog extends Stage{
 
-	public CardDialog(Card card, Database connection) {
+	public CardDialog(Card card, Database database) {
 		super();
 		this.initModality(Modality.APPLICATION_MODAL);
 		this.setResizable(false);
@@ -34,7 +33,7 @@ public class CardDialog extends Stage{
 		TabPane tabPane = new TabPane();
 		
 		try {
-			ResultSet rs = connection.mtg.query("select setName, mciCode, number from contents join sets on sets.code=contents.setName where cardName=\"" + card.name + "\";");
+			ResultSet rs = database.queryMtg("select setName, mciCode, number from contents join sets on sets.code=contents.setName where cardName=\"" + card.name + "\";");
 			while(rs.next()){
 				String mciCode = rs.getString("mciCode");
 			    String number = rs.getString("number");
@@ -50,7 +49,7 @@ public class CardDialog extends Stage{
 					Button btnAdd = new Button("Add this edition");
 					btnAdd.setOnAction(new EventHandler<ActionEvent>() {
 					    @Override public void handle(ActionEvent e) {
-					        connection.addCard(tab.c, tab.s, 1);
+					        database.addToCube(tab.c, tab.s, 1);
 					    }
 					});
 					g.add(btnAdd, 0, 1);
@@ -73,7 +72,7 @@ public class CardDialog extends Stage{
 					Button btnAdd = new Button("Add this edition");
 					btnAdd.setOnAction(new EventHandler<ActionEvent>() {
 					    @Override public void handle(ActionEvent e) {
-					        connection.addCard(tab.c, tab.s, 1);
+					        database.addToCube(tab.c, tab.s, 1);
 					    }
 					});
 					g.add(btnAdd, 0, 1);

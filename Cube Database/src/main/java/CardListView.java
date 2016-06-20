@@ -22,7 +22,7 @@ import javafx.scene.text.Font;
 
 public class CardListView extends Scene{
 	
-	Database cube;
+	Database database;
 	ObservableList<Card> data = FXCollections.observableArrayList();
 	
 	Label title;
@@ -30,8 +30,8 @@ public class CardListView extends Scene{
 
 	public CardListView(Database dm){
     	super(new Group());
-    	this.cube = dm;
-        for (Card c : cube.mtg.queryCards("select * from cards;")){
+    	this.database = dm;
+        for (Card c : database.getMtgCards("select * from cards;")){
         	data.add(c);
     	}
 
@@ -42,7 +42,18 @@ public class CardListView extends Scene{
         textField.setPromptText("Search");
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
         	data = FXCollections.observableArrayList();
-        	for (Card c : cube.mtg.queryCards("select * from cards where name like \"%" + newValue + "%\";")){
+        	for (Card c : database.getMtgCards("select * from cards where name like \"%" + newValue + "%\";")){
+        		data.add(c);
+        		
+        	}
+        	table.setItems(data);
+        });
+        
+        TextField advancedSearchField = new TextField ();
+        advancedSearchField.setPromptText("Advanced Search");
+        advancedSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
+        	data = FXCollections.observableArrayList();
+        	for (Card c : database.getMtgCards((new Filter(newValue)).toSQL())){
         		data.add(c);
         		
         	}
@@ -107,16 +118,25 @@ public class CardListView extends Scene{
 			TableRow<Card> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
-					new CardDialog(row.getItem(), cube).show();
+					new CardDialog(row.getItem(), database).show();
 				}else if (event.getButton() == MouseButton.SECONDARY){
 					
 					
 					ContextMenu menu = new ContextMenu();
+					
 					MenuItem menuInspect = new MenuItem("Inspect");
 					menuInspect.setOnAction(new EventHandler<ActionEvent>() {
 					    @Override
 					    public void handle(ActionEvent event) {
-					    	new CardDialog(row.getItem(), cube).show();
+					    	new CardDialog(row.getItem(), database).show();
+					    }
+					});
+					
+					MenuItem menuAdd = new MenuItem("Inspect");
+					menuAdd.setOnAction(new EventHandler<ActionEvent>() {
+					    @Override
+					    public void handle(ActionEvent event) {
+					    	database.addToCube(row.getItem(), database.getMostRecentSet(row.getItem()), 1);
 					    }
 					});
 					
@@ -130,7 +150,7 @@ public class CardListView extends Scene{
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(title, textField, table);
+        vbox.getChildren().addAll(title, textField, advancedSearchField, table);
  
         ((Group) getRoot()).getChildren().addAll(vbox);
     }

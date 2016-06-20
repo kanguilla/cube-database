@@ -9,34 +9,31 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class Database {
-	
-	DatabaseMtg mtg;
-	Connection cube;
-	Statement stat;
-	
-	public Database(){
+
+	Connection mtg, cube;
+	Statement cubeStatement, mtgStatement;
+
+	public Database() {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			cube = DriverManager.getConnection("jdbc:sqlite:cube.db");
-			mtg = new DatabaseMtg();
-			stat = cube.createStatement();
+			mtg = DriverManager.getConnection("jdbc:sqlite:mtg.db");
+			cubeStatement = cube.createStatement();
+			mtgStatement = mtg.createStatement();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public ArrayList<CardEntry> queryCards(String sql) {
+
+	public ArrayList<CardEntry> getCubeCards(String sql) {
 		ArrayList<CardEntry> cards = new ArrayList<CardEntry>();
 		try {
-			ResultSet rs = stat.executeQuery(sql);
+			ResultSet rs = cubeStatement.executeQuery(sql);
 			while (rs.next()) {
-				Card card = mtg.queryCards("select * from cards where name=\"" +rs.getString("name")+ "\";").get(0);
-				CardEntry cardEntry = new CardEntry(
-						card,
-						rs.getString("setCode"),
-						rs.getInt("quantity"));
+				Card card = getMtgCards("select * from cards where name=\"" + rs.getString("name") + "\";").get(0);
+				CardEntry cardEntry = new CardEntry(card, rs.getString("setCode"), rs.getInt("quantity"));
 				cards.add(cardEntry);
 			}
 			rs.close();
@@ -45,20 +42,11 @@ public class Database {
 		}
 		return cards;
 	}
-	
-	public ResultSet query(String sql) {
-		try {
-			ResultSet rs = stat.executeQuery(sql);
-			return rs;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
-	public boolean addCard(Card card, String setCode, int num){
+	public boolean addToCube(Card card, String setCode, int num) {
 		try {
-			PreparedStatement ps = cube.prepareStatement("insert into cards (name, setCode, quantity) values (?, ?, ?);");
+			PreparedStatement ps = cube
+					.prepareStatement("insert into cards (name, setCode, quantity) values (?, ?, ?);");
 			ps.setString(1, card.name);
 			ps.setString(2, setCode);
 			ps.setInt(3, num);
@@ -69,79 +57,70 @@ public class Database {
 		}
 		return true;
 	}
-	
-	public class DatabaseMtg {
-		
-		Connection database;
-		Statement stat;
-		
-		public DatabaseMtg(){
-			try {
-				Class.forName("org.sqlite.JDBC");
-				database = DriverManager.getConnection("jdbc:sqlite:mtg.db");
-				stat = database.createStatement();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (SQLException e) {
-				e.printStackTrace();
+
+	public ArrayList<Card> getMtgCards(String sql) {
+		ArrayList<Card> cards = new ArrayList<Card>();
+		try {
+			ResultSet rs = mtgStatement.executeQuery(sql);
+			while (rs.next()) {
+				Card card = new Card(rs.getString("name"), rs.getString("manaCost"), rs.getString("cmc"),
+						rs.getString("colors"), rs.getString("colorIdentity"), rs.getString("types"),
+						rs.getString("subtypes"), rs.getString("power"), rs.getString("toughness"),
+						rs.getString("text"), rs.getString("layout"));
+				cards.add(card);
 			}
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
 		}
-		
-		public ArrayList<Card> queryCards(String sql) {
-			ArrayList<Card> cards = new ArrayList<Card>();
-			try {
-				ResultSet rs = stat.executeQuery(sql);
-				while (rs.next()) {
-					Card card = new Card(
-							rs.getString("name"),
-							rs.getString("manaCost"),
-							rs.getString("cmc"),
-							rs.getString("colors"),
-							rs.getString("colorIdentity"),
-							rs.getString("types"),
-							rs.getString("subtypes"),
-							rs.getString("power"),
-							rs.getString("toughness"),
-							rs.getString("text"),
-							rs.getString("layout"));
-					cards.add(card);
-				}
-				rs.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
+		return cards;
+	}
+
+	public ArrayList<MtgSet> getSets(String sql) {
+		ArrayList<MtgSet> sets = new ArrayList<MtgSet>();
+		try {
+			ResultSet rs = mtgStatement.executeQuery(sql);
+			while (rs.next()) {
+				MtgSet set = new MtgSet(rs.getString("name"), rs.getString("code"), rs.getString("mciCode"),
+						rs.getString("release"), rs.getString("type"));
+				sets.add(set);
 			}
-			return cards;
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
 		}
-		
-		public ArrayList<MtgSet> querySets(String sql) {
-			ArrayList<MtgSet> sets = new ArrayList<MtgSet>();
-			try {
-				ResultSet rs = stat.executeQuery(sql);
-				while (rs.next()) {
-					MtgSet set = new MtgSet(
-							rs.getString("name"),
-							rs.getString("code"),
-							rs.getString("mciCode"),
-							rs.getString("release"),
-							rs.getString("type"));
-					sets.add(set);
-				}
-				rs.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			return sets;
+		return sets;
+	}
+
+	//Generic queries
+	public ResultSet queryCube(String sql) {
+		try {
+			ResultSet rs = cubeStatement.executeQuery(sql);
+			return rs;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
 		}
-		
-		public ResultSet query(String sql) {
-			try {
-				ResultSet rs = stat.executeQuery(sql);
-				return rs;
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+	}
+	public ResultSet queryMtg(String sql) {
+		try {
+			ResultSet rs = mtgStatement.executeQuery(sql);
+			return rs;
+		} catch (SQLException e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
 
+	public String getMostRecentSet(Card item) {
+		ResultSet rs = queryMtg("select setName from contents where name=\"" +item.name+ "\";");
+		try {
+			return rs.getString("setName");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
