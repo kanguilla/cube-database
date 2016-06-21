@@ -48,8 +48,7 @@ public class Database {
 
 	public boolean addToCube(Card card, String setCode, int num) {
 		try {
-			PreparedStatement ps = cube.prepareStatement(
-					"insert into cards (name, setCode, quantity) values (?, ?, ?);");
+			PreparedStatement ps = cube.prepareStatement("insert into cards (name, setCode, quantity) values (?, ?, ?);");
 			ps.setString(1, card.name);
 			ps.setString(2, setCode);
 			ps.setInt(3, num);
@@ -64,8 +63,7 @@ public class Database {
 	
 	public boolean addToArchetype(Card c, Archetype a){
 		try {
-			PreparedStatement ps = cube.prepareStatement(
-					"insert into archMembers (archName, cardName) values (?, ?);");
+			PreparedStatement ps = cube.prepareStatement("insert into archMembers (archName, cardName) values (?, ?);");
 			ps.setString(1, a.name);
 			ps.setString(2, c.name);
 			ps.execute();
@@ -207,5 +205,35 @@ public class Database {
 		}
 		vc.updateAll();
 		return true;
+	}
+	
+	public boolean removeFromCube(Card c, String setCode){
+		try {
+			cubeStatement.execute("delete from cards where name=\"" + c.name + "\" and setCode=\"" + setCode + "\";");
+			cubeStatement.execute("delete from archMembers where cardName=\"" + c.name + "\";");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		vc.updateAll();
+		return true;
+	}
+	
+	public boolean removeFromCube(Card c, String setCode, int num){
+		
+			try {
+
+				if (queryCube("select quantity from cards where name=\"" + c.name + "\" and setCode=\"" + setCode + "\";").getInt("quantity") - num <= 0){
+					removeFromCube(c, setCode);
+				}else{
+				cubeStatement.executeUpdate("update cards set quantity where name=\"" + c.name + "\" and setCode=\"" + setCode + "\";");
+				//cubeStatement.execute("delete from archMembers where archName=\"" + a.name + "\";");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+			vc.updateAll();
+			return true;
 	}
 }

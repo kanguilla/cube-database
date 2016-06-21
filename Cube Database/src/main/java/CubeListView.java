@@ -2,14 +2,19 @@ package main.java;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
@@ -98,6 +103,29 @@ public class CubeListView extends DynamicScene{
 			row.setOnMouseClicked(event -> {
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
 					new CardDialog(row.getItem().card, database).show();
+				}else if (event.getButton() == MouseButton.SECONDARY){
+					
+					
+					ContextMenu menu = new ContextMenu();
+					
+					MenuItem menuInspect = new MenuItem("Inspect");
+					menuInspect.setOnAction(new EventHandler<ActionEvent>() {
+					    @Override
+					    public void handle(ActionEvent event) {
+					    	new CardDialog(row.getItem().card, database).show();
+					    }
+					});
+					
+					MenuItem menuRemove = new MenuItem("Remove");
+					menuRemove.setOnAction(new EventHandler<ActionEvent>() {
+					    @Override
+					    public void handle(ActionEvent event) {
+					    	database.removeFromCube(row.getItem().card, row.getItem().set);
+					    }
+					});
+					
+					menu.getItems().addAll(menuInspect, menuRemove);
+					menu.show(row, event.getScreenX(), event.getScreenY());
 				}
 			});
             return row ;

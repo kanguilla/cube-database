@@ -26,12 +26,12 @@ public class CardListView extends DynamicScene{
 	
 	Label title;
 	TableView<Card> table = new TableView<Card>();
-	Filter filter;
+	Filter filter = new Filter("");
 	
 	public CardListView(Database dm){
     	super(new Group());
     	this.database = dm;
-    	data.addAll(database.getMtgCards("select * from cards;"));
+    	data.addAll(database.getMtgCards(filter.toSQL()));
 
         Label title = new Label("Cards");
         title.setFont(new Font("Arial", 20));
@@ -70,9 +70,9 @@ public class CardListView extends DynamicScene{
 
                     TableRow<Card> tr = getTableRow();
                     
-                    if (item == null) {
+                    if (item == null || empty) {
                         setText(null);
-                        setStyle("");
+                        tr.setStyle("");
                     } else {
                     	setText(item);
                         if (item.contains("W")) {
