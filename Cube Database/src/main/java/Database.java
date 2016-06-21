@@ -45,8 +45,8 @@ public class Database {
 
 	public boolean addToCube(Card card, String setCode, int num) {
 		try {
-			PreparedStatement ps = cube
-					.prepareStatement("insert into cards (name, setCode, quantity) values (?, ?, ?);");
+			PreparedStatement ps = cube.prepareStatement(
+					"insert into cards (name, setCode, quantity) values (?, ?, ?);");
 			ps.setString(1, card.name);
 			ps.setString(2, setCode);
 			ps.setInt(3, num);
@@ -56,6 +56,61 @@ public class Database {
 			return false;
 		}
 		return true;
+	}
+	
+	public boolean addToArchetype(Card c, Archetype a){
+		try {
+			PreparedStatement ps = cube.prepareStatement(
+					"insert into archMembers (archName, cardName) values (?, ?);");
+			ps.setString(1, a.name);
+			ps.setString(2, c.name);
+			ps.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public ArrayList<Card> getCards(Archetype a){
+		ArrayList<Card> cards = new ArrayList<Card>();
+		try {
+			ResultSet rs = cubeStatement.executeQuery("select cardName from archMembers where name=\"" + a.name + "\";");
+			while (rs.next()) {
+				Card card = getMtgCards("select * from cards where name=\"" + rs.getString("name") + "\";").get(0);
+				cards.add(card);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return cards;
+	}
+	
+	public int getArchetypeSize(Archetype a){
+		try {
+			ResultSet rs = cubeStatement.executeQuery("SELECT COUNT(*) FROM archMembers where archName=\"" + a.name + "\";");
+			return rs.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+	
+	public ArrayList<Archetype> getArchetypes() {
+		ArrayList<Archetype> archetypes = new ArrayList<Archetype>();
+		try {
+			ResultSet rs = cubeStatement.executeQuery("select * from archetypes");
+			while (rs.next()) {
+				Archetype archetype = new Archetype(rs.getString("name"));
+				archetypes.add(archetype);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return archetypes;
 	}
 
 	public ArrayList<Card> getMtgCards(String sql) {
@@ -122,5 +177,28 @@ public class Database {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public boolean createArchetype(Archetype a){
+		try {
+			PreparedStatement ps = cube.prepareStatement(
+					"insert or ignore into archetypes (name) values (?);");
+			ps.setString(1, a.name);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean destroyArchetype(Archetype a){
+		try {
+			cubeStatement.execute("delete from archetypes where name=\"" + a.name + "\";");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 }

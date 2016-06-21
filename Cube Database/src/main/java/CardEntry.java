@@ -13,8 +13,7 @@ public class CardEntry{
 	}
 	
 	public SimpleIntegerProperty getQuantityProperty(){
-		SimpleIntegerProperty si = new SimpleIntegerProperty();
-		si.set(this.quantity);
+		SimpleIntegerProperty si = new SimpleIntegerProperty(this.quantity);
 		return si;
 	}
 }

@@ -29,7 +29,7 @@ public class CubeListView extends Scene{
         
    		data.addAll(database.getCubeCards("select * from cards;"));
    		
-        Label title = new Label("Cards");
+        Label title = new Label("Cube");
         title.setFont(new Font("Arial", 20));
         
         TextField textField = new TextField ();
@@ -111,4 +111,9 @@ public class CubeListView extends Scene{
  
         ((Group) getRoot()).getChildren().addAll(vbox);
     }
+	
+	public void refresh(){
+		data.setAll(database.getCubeCards("select * from cards;"));
+		table.setItems(data);
+	}
 }

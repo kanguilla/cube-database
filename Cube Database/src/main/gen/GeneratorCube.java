@@ -26,10 +26,23 @@ public class GeneratorCube {
 					+ "quantity int);");
 			System.out.println("Created card table ("+ (System.currentTimeMillis() - time)/1000 +")");
 			
+			time = System.currentTimeMillis();
+			stat.executeUpdate("drop table if exists archetypes;");
+			stat.executeUpdate("create table if not exists archetypes("
+					+ "name varchar(50) primary key not NULL);");
+			System.out.println("Created archetype table ("+ (System.currentTimeMillis() - time)/1000 +")");
+			
+			time = System.currentTimeMillis();
+			stat.executeUpdate("drop table if exists archMembers;");
+			stat.executeUpdate("create table if not exists archmembers("
+					+ "archName varchar(50) references archetypes(name), "
+					+ "cardName varchar (50)references cards(name));");
+			System.out.println("Created archMembers table ("+ (System.currentTimeMillis() - time)/1000 +")");
+			
 			//Sample Data
 			time = System.currentTimeMillis();
 			stat.execute("insert into cards (name, setCode, quantity) values ('Battlewise Hoplite', 'THS', 1);");
-			System.out.println("Added sample data( "+ (System.currentTimeMillis() - time)/1000 +")");
+			System.out.println("Added sample data("+ (System.currentTimeMillis() - time)/1000 +")");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

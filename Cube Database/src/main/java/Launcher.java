@@ -12,11 +12,15 @@ public class Launcher extends Application{
  
     @Override
     public void start(Stage stage) {
-        stage.setScene(new CardListView(dc));
+    	stage.setScene(new CardListView(dc));
         stage.show();
     	
         Stage cubeStage = new Stage();
         cubeStage.setScene(new CubeListView(dc));
         cubeStage.show();
+        
+        Stage archStage = new Stage();
+        archStage.setScene(new ArchListView(dc));
+        archStage.show();
     }
 }
