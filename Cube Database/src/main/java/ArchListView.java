@@ -20,7 +20,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 
-public class ArchListView extends Scene{
+public class ArchListView extends DynamicScene{
 	
 	Database database;
 	ObservableList<Archetype> data = FXCollections.observableArrayList();
@@ -98,4 +98,10 @@ public class ArchListView extends Scene{
  
         ((Group) getRoot()).getChildren().addAll(g);
     }
+
+	@Override
+	public void update() {
+		data.setAll(database.getArchetypes());
+    	table.setItems(data);
+	}
 }

@@ -23,6 +23,9 @@ public class Filter {
 		}
 	}
 	
+	public Filter() {
+	}
+
 	ArrayList<String> names = new ArrayList<String>();
 	ArrayList<String> types = new ArrayList<String>();
 	

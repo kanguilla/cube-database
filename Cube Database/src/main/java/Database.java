@@ -12,8 +12,11 @@ public class Database {
 
 	Connection mtg, cube;
 	Statement cubeStatement, mtgStatement;
-
-	public Database() {
+	ViewController vc;
+	
+	
+	public Database(ViewController vc) {
+		this.vc = vc;
 		try {
 			Class.forName("org.sqlite.JDBC");
 			cube = DriverManager.getConnection("jdbc:sqlite:cube.db");
@@ -55,6 +58,7 @@ public class Database {
 			e.printStackTrace();
 			return false;
 		}
+		vc.updateAll();
 		return true;
 	}
 	
@@ -69,6 +73,7 @@ public class Database {
 			e.printStackTrace();
 			return false;
 		}
+		vc.updateAll();
 		return true;
 	}
 	
@@ -170,7 +175,7 @@ public class Database {
 	}
 
 	public String getMostRecentSet(Card item) {
-		ResultSet rs = queryMtg("select setName from contents where name=\"" +item.name+ "\";");
+		ResultSet rs = queryMtg("select setName from contents where cardName=\"" +item.name+ "\";");
 		try {
 			return rs.getString("setName");
 		} catch (SQLException e) {
@@ -181,24 +186,26 @@ public class Database {
 	
 	public boolean createArchetype(Archetype a){
 		try {
-			PreparedStatement ps = cube.prepareStatement(
-					"insert or ignore into archetypes (name) values (?);");
+			PreparedStatement ps = cube.prepareStatement("insert or ignore into archetypes (name) values (?);");
 			ps.setString(1, a.name);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
+		vc.updateAll();
 		return true;
 	}
 	
 	public boolean destroyArchetype(Archetype a){
 		try {
 			cubeStatement.execute("delete from archetypes where name=\"" + a.name + "\";");
+			cubeStatement.execute("delete from archMembers where archName=\"" + a.name + "\";");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
+		vc.updateAll();
 		return true;
 	}
 }

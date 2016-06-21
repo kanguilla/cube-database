@@ -3,8 +3,8 @@ import javafx.application.*;
 import javafx.stage.Stage;
 
 public class Launcher extends Application{
-    
-	Database dc = new Database();
+	ViewController views;
+	Database dc;
 	
     public static void main(String[] args) {
         launch(args);
@@ -12,15 +12,11 @@ public class Launcher extends Application{
  
     @Override
     public void start(Stage stage) {
-    	stage.setScene(new CardListView(dc));
-        stage.show();
-    	
-        Stage cubeStage = new Stage();
-        cubeStage.setScene(new CubeListView(dc));
-        cubeStage.show();
-        
-        Stage archStage = new Stage();
-        archStage.setScene(new ArchListView(dc));
-        archStage.show();
+    	ViewController views = new ViewController();
+    	dc = new Database(views);
+    	views.addView(new CardListView(dc));
+        views.addView(new CubeListView(dc));
+        views.addView(new ArchListView(dc));
+        views.show();
     }
 }

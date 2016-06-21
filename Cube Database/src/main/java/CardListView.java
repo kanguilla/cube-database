@@ -6,7 +6,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -20,44 +19,28 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
-public class CardListView extends Scene{
+public class CardListView extends DynamicScene{
 	
 	Database database;
 	ObservableList<Card> data = FXCollections.observableArrayList();
 	
 	Label title;
 	TableView<Card> table = new TableView<Card>();
-
+	Filter filter;
+	
 	public CardListView(Database dm){
     	super(new Group());
     	this.database = dm;
-        for (Card c : database.getMtgCards("select * from cards;")){
-        	data.add(c);
-    	}
+    	data.addAll(database.getMtgCards("select * from cards;"));
 
         Label title = new Label("Cards");
         title.setFont(new Font("Arial", 20));
         
-        TextField textField = new TextField ();
-        textField.setPromptText("Search");
-        textField.textProperty().addListener((observable, oldValue, newValue) -> {
-        	data = FXCollections.observableArrayList();
-        	for (Card c : database.getMtgCards("select * from cards where name like \"%" + newValue + "%\";")){
-        		data.add(c);
-        		
-        	}
-        	table.setItems(data);
-        });
-        
-        TextField advancedSearchField = new TextField ();
-        advancedSearchField.setPromptText("Advanced Search");
-        advancedSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
-        	data = FXCollections.observableArrayList();
-        	for (Card c : database.getMtgCards((new Filter(newValue)).toSQL())){
-        		data.add(c);
-        		
-        	}
-        	table.setItems(data);
+        TextField searchField = new TextField ();
+        searchField.setPromptText("Search");
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+        	filter = new Filter(newValue);
+        	update();
         });
         
         table.setEditable(false);
@@ -132,7 +115,7 @@ public class CardListView extends Scene{
 					    }
 					});
 					
-					MenuItem menuAdd = new MenuItem("Inspect");
+					MenuItem menuAdd = new MenuItem("Add");
 					menuAdd.setOnAction(new EventHandler<ActionEvent>() {
 					    @Override
 					    public void handle(ActionEvent event) {
@@ -140,7 +123,7 @@ public class CardListView extends Scene{
 					    }
 					});
 					
-					menu.getItems().add(menuInspect);
+					menu.getItems().addAll(menuInspect, menuAdd);
 					menu.show(row, event.getScreenX(), event.getScreenY());
 				}
 			});
@@ -150,8 +133,14 @@ public class CardListView extends Scene{
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(title, textField, advancedSearchField, table);
+        vbox.getChildren().addAll(title, searchField, table);
  
         ((Group) getRoot()).getChildren().addAll(vbox);
     }
+
+	@Override
+	public void update() {
+		data.setAll(database.getMtgCards(filter.toSQL()));
+		table.setItems(data);
+	}
 }

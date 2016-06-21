@@ -7,16 +7,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -27,8 +30,7 @@ public class CardDialog extends Stage{
 		super();
 		this.initModality(Modality.APPLICATION_MODAL);
 		this.setResizable(false);
-		VBox layout = new VBox();
-		
+
 		Text title = new Text(card.getName());
 		TabPane tabPane = new TabPane();
 		
@@ -43,50 +45,49 @@ public class CardDialog extends Stage{
 				CardTab tab = new CardTab(card, setName, mciCode, number);
 				tab.setClosable(false);
 				tabPane.getTabs().add(tab);
-				if(tab.isSelected()){
-					GridPane g = new GridPane();
-					g.add(new ImageView(loadImage(tab.mciCode, tab.number)), 0, 0);
-					Button btnAdd = new Button("Add this edition");
-					btnAdd.setOnAction(new EventHandler<ActionEvent>() {
-					    @Override public void handle(ActionEvent e) {
-					        database.addToCube(tab.c, tab.s, 1);
-					    }
-					});
-					g.add(btnAdd, 0, 1);
-					tab.setContent(g);
-				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
 		
-		
+		TextField numberField = new TextField("1");
 		tabPane.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
 		    @Override
 		    public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
-		    	CardTab tab = (CardTab) tabPane.getTabs().get(newValue.intValue());
-		    	if (tab.getContent() == null){
-		    		GridPane g = new GridPane();
-					g.add(new ImageView(loadImage(tab.mciCode, tab.number)), 0, 0);
-					Button btnAdd = new Button("Add this edition");
-					btnAdd.setOnAction(new EventHandler<ActionEvent>() {
-					    @Override public void handle(ActionEvent e) {
-					        database.addToCube(tab.c, tab.s, 1);
-					    }
-					});
-					g.add(btnAdd, 0, 1);
-					tab.setContent(g);
-		        }
+
 		    }
 		}); 
+		ChoiceBox<Archetype> cb = new ChoiceBox<Archetype>(FXCollections.observableArrayList(database.getArchetypes()));
+		Button btnAdd = new Button("Add this edition");
+		btnAdd.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override public void handle(ActionEvent e) {
+		    	try{
+			        database.addToCube(card, ((CardTab) tabPane.getSelectionModel().getSelectedItem()).code, Integer.parseInt(numberField.getText()));
+			        database.addToArchetype(card, cb.getValue());
+		    	}catch (NumberFormatException nfe){
+		    		System.out.println("Wrong number format");
+		    	}
+		    }
+		});
 		
-		layout.getChildren().addAll(title, tabPane);
+		cb.setValue(database.getArchetypes().get(0));
+		cb.setTooltip(new Tooltip("(Optional) Select an archetype"));
+		cb.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+			public void changed(ObservableValue ov, Number value, Number newValue) {
+				
+			}
+		});
+
+		GridPane layout = new GridPane();
+		layout.add(title, 0, 0);
+		layout.add(tabPane, 0, 1);
+		layout.add(btnAdd, 0, 2);
+		layout.add(cb, 0, 3);
+		layout.add(numberField, 0, 4);
 		
 		Scene dialogScene = new Scene(layout, 300, 520);
 		setScene(dialogScene);
-
-		
 		
 	}
 	
@@ -109,15 +110,19 @@ public class CardDialog extends Stage{
 	
 	class CardTab extends Tab{
 		
-		String mciCode, number, s;
+		String mciCode, number, code;
 		Card c;
 		
 		public CardTab(Card c, String s, String mciCode, String number){
 			super(s);
-			this.s = s;
+			this.code = s;
 			this.c = c;
 			this.mciCode = mciCode;
 			this.number = number;
+			
+			GridPane g = new GridPane();
+			g.add(new ImageView(loadImage(mciCode, number)), 0, 0);
+			setContent(g);
 		}
 	}
 
