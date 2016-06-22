@@ -1,5 +1,8 @@
 package main.java;
 
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -7,6 +10,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+
+import javafx.scene.image.Image;
+import main.java.CardDialog.CardTab;
 
 public class Database {
 
@@ -236,4 +242,51 @@ public class Database {
 			vc.updateAll();
 			return true;
 	}
+	
+	
+	public Image loadImage(Card card){
+		try {
+			ResultSet rs = queryMtg("select setName, number from contents join sets on sets.code=contents.setName where cardName=\"" + card.name + "\";");
+			return loadImage(rs.getString("mciCode"), rs.getString("number"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public Image loadImage(Card card, String setCode){
+		try {
+			System.out.println(card.name + " from " + setCode);
+			ResultSet rs = queryMtg("select mciCode, number from contents join sets on sets.code=contents.setName where cardName=\"" + card.name + "\" and code=\""+ setCode + "\";");
+			String imageUrl = "http://magiccards.info/scans/en/" +rs.getString("mciCode")+ "/" + rs.getString("number") + ".jpg";
+			URLConnection hc;
+			try {
+				hc = new URL(imageUrl).openConnection();
+				hc.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36");
+				hc.connect();
+				return new Image(hc.getInputStream());
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public Image loadImage(String mciCode, String number){
+		String imageUrl = "http://magiccards.info/scans/en/" +mciCode+ "/" + number + ".jpg";
+		URLConnection hc;
+		try {
+			hc = new URL(imageUrl).openConnection();
+			hc.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36");
+			hc.connect();
+			return new Image(hc.getInputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 }

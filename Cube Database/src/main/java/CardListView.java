@@ -15,7 +15,9 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
@@ -130,12 +132,13 @@ public class CardListView extends DynamicScene{
             return row ;
         });
  
-        final VBox vbox = new VBox();
-        vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(title, searchField, table);
- 
-        ((Group) getRoot()).getChildren().addAll(vbox);
+        final GridPane layout = new GridPane();
+        layout.setPadding(new Insets(10, 10, 10, 10));
+        layout.add(title, 0, 0);
+        layout.add(searchField, 0, 1);
+        layout.add(table, 0, 2);
+        layout.add(new ImageView(), 1, 0);
+        ((Group) getRoot()).getChildren().addAll(layout);
     }
 
 	@Override
