@@ -120,7 +120,9 @@ public class CubeListView extends DynamicScene{
 					menuRemove.setOnAction(new EventHandler<ActionEvent>() {
 					    @Override
 					    public void handle(ActionEvent event) {
-					    	database.removeFromCube(row.getItem().card, row.getItem().set);
+					    	if (row.getItem() != null){
+					    		database.removeFromCube(row.getItem().card, row.getItem().set);
+					    	}
 					    }
 					});
 					

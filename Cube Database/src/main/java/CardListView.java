@@ -18,7 +18,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 public class CardListView extends DynamicScene{
@@ -28,6 +27,7 @@ public class CardListView extends DynamicScene{
 	
 	Label title;
 	TableView<Card> table = new TableView<Card>();
+	ImageView previewPane;
 	Filter filter = new Filter("");
 	
 	public CardListView(Database dm){
@@ -35,6 +35,8 @@ public class CardListView extends DynamicScene{
     	this.database = dm;
     	data.addAll(database.getMtgCards(filter.toSQL()));
 
+    	
+    	previewPane = new ImageView();
         Label title = new Label("Cards");
         title.setFont(new Font("Arial", 20));
         
@@ -131,19 +133,32 @@ public class CardListView extends DynamicScene{
 			});
             return row ;
         });
- 
+        
+        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+        	if (newSelection != null){
+        		setPreview(newSelection);
+        	}
+        });
+        
         final GridPane layout = new GridPane();
         layout.setPadding(new Insets(10, 10, 10, 10));
         layout.add(title, 0, 0);
         layout.add(searchField, 0, 1);
         layout.add(table, 0, 2);
-        layout.add(new ImageView(), 1, 0);
+        layout.add(previewPane, 1, 2);
         ((Group) getRoot()).getChildren().addAll(layout);
+        
+        table.getSelectionModel().select(0);
     }
 
 	@Override
 	public void update() {
 		data.setAll(database.getMtgCards(filter.toSQL()));
 		table.setItems(data);
+		//setPreview(table.getSelectionModel().getSelectedItem());
+	}
+	
+	public void setPreview(Card c){
+		previewPane.imageProperty().set(database.loadImage(c));
 	}
 }

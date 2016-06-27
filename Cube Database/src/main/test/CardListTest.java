@@ -1,8 +1,12 @@
-package main.java;
-import javafx.application.*;
-import javafx.stage.Stage;
+package main.test;
 
-public class Launcher extends Application{
+import javafx.application.Application;
+import javafx.stage.Stage;
+import main.java.CardListView;
+import main.java.Database;
+import main.java.ViewController;
+
+public class CardListTest extends Application{
 	ViewController views;
 	Database dc;
 	
@@ -15,9 +19,6 @@ public class Launcher extends Application{
     	ViewController views = new ViewController();
     	dc = new Database(views);
     	views.addView(new CardListView(dc));
-        views.addView(new CubeListView(dc));
-        views.addView(new ArchListView(dc));
         views.show();
-        views.updateAll();
     }
 }

@@ -17,6 +17,7 @@ public class ViewController {
 	public void addView(Scene s){
 		Stage stage = new Stage();
 		stage.setScene(s);
+		stage.sizeToScene();
 		stages.add(stage);
 	}
 	
@@ -29,6 +30,7 @@ public class ViewController {
 	public void updateAll(){
 		for (Stage s : stages){
 			((DynamicScene)  (s.getScene())).update();
+			s.sizeToScene();
 		}
 	}
 }

@@ -10,15 +10,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javafx.scene.image.Image;
-import main.java.CardDialog.CardTab;
 
 public class Database {
 
-	Connection mtg, cube;
-	Statement cubeStatement, mtgStatement;
-	ViewController vc;
+	private Connection mtg, cube;
+	private Statement cubeStatement, mtgStatement;
+	private ViewController vc;
+	
+	private HashMap<CardEntry, Image> imageCache = new HashMap<CardEntry, Image>();
 	
 	
 	public Database(ViewController vc) {
@@ -246,7 +248,7 @@ public class Database {
 	
 	public Image loadImage(Card card){
 		try {
-			ResultSet rs = queryMtg("select setName, number from contents join sets on sets.code=contents.setName where cardName=\"" + card.name + "\";");
+			ResultSet rs = queryMtg("select mciCode, number from contents join sets on sets.code=contents.setName where cardName=\"" + card.name + "\";");
 			return loadImage(rs.getString("mciCode"), rs.getString("number"));
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -256,8 +258,9 @@ public class Database {
 	
 	public Image loadImage(Card card, String setCode){
 		try {
-			System.out.println(card.name + " from " + setCode);
+			
 			ResultSet rs = queryMtg("select mciCode, number from contents join sets on sets.code=contents.setName where cardName=\"" + card.name + "\" and code=\""+ setCode + "\";");
+			System.out.println("Loading image: " + card.name + " from " + rs.getString("mciCode"));
 			String imageUrl = "http://magiccards.info/scans/en/" +rs.getString("mciCode")+ "/" + rs.getString("number") + ".jpg";
 			URLConnection hc;
 			try {
@@ -266,7 +269,7 @@ public class Database {
 				hc.connect();
 				return new Image(hc.getInputStream());
 			} catch (IOException e) {
-				e.printStackTrace();
+				
 				return null;
 			}
 		} catch (SQLException e) {

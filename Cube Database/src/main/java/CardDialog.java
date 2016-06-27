@@ -33,10 +33,12 @@ public class CardDialog extends Stage{
 		Text title = new Text(card.getName());
 		TabPane tabPane = new TabPane();
 		
+		System.out.println("Creating a dialog with " + card.name);
+		
 		try {
-			ResultSet rs = database.queryMtg("select setName, mciCode from contents join sets on sets.code=contents.setName where cardName=\"" + card.name + "\";");
+			ResultSet rs = database.queryMtg("select setName from contents where cardName=\"" + card.name + "\";");
 			while(rs.next()){
-			    String setCode = rs.getString("setName");				
+			    String setCode = rs.getString(1);				
 				tabPane.getTabs().add(new CardTab(card, setCode));
 			}
 		} catch (SQLException e) {
@@ -61,6 +63,7 @@ public class CardDialog extends Stage{
 		    	}catch (NumberFormatException nfe){
 		    		System.out.println("Wrong number format");
 		    	}
+		    	
 		    }
 		});
 		
@@ -91,6 +94,8 @@ public class CardDialog extends Stage{
 		
 		public CardTab(Card card, String setCode){
 			super(setCode);
+			System.out.println("Tab created: " + card.name + " " + setCode);
+			
 			this.code = setCode;
 			setClosable(false);
 			
