@@ -1,4 +1,4 @@
-package main.java;
+package main.core;
 import java.util.Optional;
 
 import javafx.beans.property.SimpleIntegerProperty;

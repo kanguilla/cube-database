@@ -1,4 +1,4 @@
-package main.java;
+package main.core;
 
 import java.io.IOException;
 import java.net.URL;
@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import javafx.scene.image.Image;
 
@@ -20,7 +21,7 @@ public class Database {
 	private Statement cubeStatement, mtgStatement;
 	private ViewController vc;
 	
-	private HashMap<CardEntry, Image> imageCache = new HashMap<CardEntry, Image>();
+	private HashMap<Map.Entry<Card, String>, Image> imageCache = new HashMap<Map.Entry<Card, String>, Image>();
 	
 	
 	public Database(ViewController vc) {
@@ -56,7 +57,7 @@ public class Database {
 
 	public boolean addToCube(Card card, String setCode, int num) {
 		try {
-			PreparedStatement ps = cube.prepareStatement("insert into cards (name, setCode, quantity) values (?, ?, ?);");
+			PreparedStatement ps = cube.prepareStatement("insert or ignore into cards (name, setCode, quantity) values (?, ?, ?);");
 			ps.setString(1, card.name);
 			ps.setString(2, setCode);
 			ps.setInt(3, num);
@@ -257,19 +258,23 @@ public class Database {
 	}
 	
 	public Image loadImage(Card card, String setCode){
+		
+		if (imageCache.containsKey(new Map.Entry()){
+			
+		}
+		
+		
 		try {
 			
 			ResultSet rs = queryMtg("select mciCode, number from contents join sets on sets.code=contents.setName where cardName=\"" + card.name + "\" and code=\""+ setCode + "\";");
 			System.out.println("Loading image: " + card.name + " from " + rs.getString("mciCode"));
 			String imageUrl = "http://magiccards.info/scans/en/" +rs.getString("mciCode")+ "/" + rs.getString("number") + ".jpg";
-			URLConnection hc;
 			try {
-				hc = new URL(imageUrl).openConnection();
+				URLConnection hc = new URL(imageUrl).openConnection();
 				hc.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36");
 				hc.connect();
 				return new Image(hc.getInputStream());
 			} catch (IOException e) {
-				
 				return null;
 			}
 		} catch (SQLException e) {
@@ -291,5 +296,15 @@ public class Database {
 			return null;
 		}
 	}
-	
+
+	public boolean setSource(String string) {
+		try {
+			cube = DriverManager.getConnection("jdbc:sqlite:"+string+".db");
+			vc.updateAll();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 }

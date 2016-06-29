@@ -1,8 +1,8 @@
-package main.java;
+package main.core;
 
 import java.util.List;
 
-import main.java.Card;
+import main.core.Card;
 
 public class MtgSet{
 	String name;

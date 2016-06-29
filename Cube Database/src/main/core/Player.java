@@ -1,4 +1,4 @@
-package main.java;
+package main.core;
 import java.util.HashMap;
 
 public class Player {

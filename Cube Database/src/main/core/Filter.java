@@ -1,4 +1,4 @@
-package main.java;
+package main.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +64,20 @@ public class Filter {
 		s += ";";
 		System.out.println("Filter: " + s);
 		return s;
+	}
+	
+	public static String toSQL(String proto){
+		String s = "select * from cards where name like \"%\" ";
+		
+		String[] args  = proto.split(" ");
+		
+		
+		
+		return s;
+	}
+	
+	public class Argument {
+		
 	}
 	
 }

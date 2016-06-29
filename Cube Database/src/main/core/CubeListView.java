@@ -1,4 +1,6 @@
-package main.java;
+package main.core;
+import java.util.Optional;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,12 +10,15 @@ import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -23,7 +28,9 @@ public class CubeListView extends DynamicScene{
 	Database database;
 	ObservableList<CardEntry> data = FXCollections.observableArrayList();
 	
+	MenuBar menu;
 	Label title;
+	
 	TableView<CardEntry> table = new TableView<CardEntry>();
 
 	public CubeListView(Database dc){
@@ -33,7 +40,23 @@ public class CubeListView extends DynamicScene{
         
    		data.addAll(database.getCubeCards("select * from cards;"));
    		
-        Label title = new Label("Cube");
+   		menu = new MenuBar();
+   		Menu m_cube = new Menu("Cube");
+   		MenuItem m_new = new Menu("New");
+   		m_new.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent t) {
+            	TextInputDialog dialog = new TextInputDialog("New Cube");
+		    	dialog.setHeaderText("Enter cube name");
+		    	Optional<String> result = dialog.showAndWait();
+		    	if (result.isPresent()){
+		    		database.setSource(result.get());
+		    	}
+            }
+        });   
+   		m_cube.getItems().add(m_new);
+   		menu.getMenus().add(m_cube);
+   		
+        title = new Label("Cube");
         title.setFont(new Font("Arial", 20));
         
         TextField textField = new TextField ();
@@ -102,7 +125,7 @@ public class CubeListView extends DynamicScene{
 			TableRow<CardEntry> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
-					new CardDialog(row.getItem().card, database).show();
+					new CardEntryDialog(row.getItem(), database).show();
 				}else if (event.getButton() == MouseButton.SECONDARY){
 					
 					
@@ -135,8 +158,7 @@ public class CubeListView extends DynamicScene{
  
         final VBox vbox = new VBox();
         vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(title, textField, table);
+        vbox.getChildren().addAll(menu, title, textField, table);
  
         ((Group) getRoot()).getChildren().addAll(vbox);
     }

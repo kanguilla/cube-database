@@ -1,4 +1,4 @@
-package main.java;
+package main.core;
 
 import javafx.beans.property.SimpleIntegerProperty;
 
@@ -11,7 +11,7 @@ public class CardEntry{
 		this.set = set;
 		this.quantity = quantity;
 	}
-	
+
 	public SimpleIntegerProperty getQuantityProperty(){
 		SimpleIntegerProperty si = new SimpleIntegerProperty(this.quantity);
 		return si;

@@ -1,4 +1,4 @@
-package main.java;
+package main.core;
 
 import java.io.IOException;
 import java.net.URL;

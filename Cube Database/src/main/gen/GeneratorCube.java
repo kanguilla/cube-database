@@ -40,9 +40,9 @@ public class GeneratorCube {
 			System.out.println("Created archMembers table ("+ (System.currentTimeMillis() - time)/1000 +")");
 			
 			//Sample Data
-			time = System.currentTimeMillis();
-			stat.execute("insert into cards (name, setCode, quantity) values ('Battlewise Hoplite', 'THS', 1);");
-			System.out.println("Added sample data("+ (System.currentTimeMillis() - time)/1000 +")");
+//			time = System.currentTimeMillis();
+//			stat.execute("insert into cards (name, setCode, quantity) values ('Battlewise Hoplite', 'THS', 1);");
+//			System.out.println("Added sample data("+ (System.currentTimeMillis() - time)/1000 +")");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

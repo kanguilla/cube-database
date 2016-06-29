@@ -1,4 +1,4 @@
-package main.java;
+package main.core;
 import javafx.application.*;
 import javafx.stage.Stage;
 
@@ -17,6 +17,7 @@ public class Launcher extends Application{
     	views.addView(new CardListView(dc));
         views.addView(new CubeListView(dc));
         views.addView(new ArchListView(dc));
+        views.addView(new StatisticsView(dc));
         views.show();
         views.updateAll();
     }

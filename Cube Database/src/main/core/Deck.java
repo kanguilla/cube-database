@@ -1,4 +1,4 @@
-package main.java;
+package main.core;
 
 public class Deck {
 	
