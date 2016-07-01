@@ -64,5 +64,30 @@ public class Card{
 			}
 			return out;
 		}
-		
+		public String getCSSStyle(){
+			
+			String ts = this.getColorString();
+			
+			if (ts.equalsIgnoreCase("W")){
+				return "-fx-background-color: #ffffcc";
+			}
+			if (ts.equalsIgnoreCase("U")){
+				return "-fx-background-color: #66ccff";
+			}
+			if (ts.equalsIgnoreCase("B")){
+				return "-fx-background-color: #b3b3b3";
+			}
+			if (ts.equalsIgnoreCase("R")){
+				return "-fx-background-color: #ff6666";
+			}
+			if (ts.equalsIgnoreCase("G")){
+				return "-fx-background-color: #85e085";
+			}
+			
+			if (ts.equalsIgnoreCase("")){
+				return "-fx-background-color: #dfbf9f";
+			}
+			
+			return "-fx-background-color: #ffcc66";
+		}
 	}

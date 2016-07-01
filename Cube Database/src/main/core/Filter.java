@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Filter {
+	
+	
+	
+	
+	String ordering = "";
+	String selection = "select * from cards where name like \"%\" ";
+	
 	public Filter (String proto){
 		String[] args = proto.split(" ");
 		
@@ -50,7 +57,7 @@ public class Filter {
 
 	
 	public String toSQL(){
-		String s = "select * from cards where name like \"%\" ";
+		String s = selection;
 		
 		
 		for (int i = 0; i < names.size(); i++){
@@ -60,24 +67,30 @@ public class Filter {
 		for (int i = 0; i < types.size(); i++){
 			s += "and (types like \"%" + types.get(i) + "%\" or subtypes like \"%" + types.get(i) + "%\") ";
 		}
-		
+		s += " " + ordering;
 		s += ";";
-		System.out.println("Filter: " + s);
+		System.out.println(s);
 		return s;
 	}
-	
-	public static String toSQL(String proto){
-		String s = "select * from cards where name like \"%\" ";
-		
-		String[] args  = proto.split(" ");
-		
-		
-		
-		return s;
+
+
+	public void setOrdering(String string) {
+		ordering = string;
+	}
+
+	public void setSelection(String string) {
+		selection = string;
 	}
 	
-	public class Argument {
-		
+	public class Node{
+		boolean type;
+		Node left;
+		Node right;
+		public Node(boolean type, Node left, Node right){
+			this.type = type;
+			this.left = left;
+			this.right = right;
+		}
 	}
 	
 }

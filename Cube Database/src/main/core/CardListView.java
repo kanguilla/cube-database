@@ -74,24 +74,14 @@ public class CardListView extends DynamicScene{
 
                     TableRow<Card> tr = getTableRow();
                     
-                    if (item == null || empty) {
+                    if (item == null || empty || tr.getItem() == null) {
                         setText(null);
                         tr.setStyle("");
+                    } else if (table.getSelectionModel().isSelected(tr.getIndex())){
+                    	tr.setStyle("-fx-background-color: #000000; -fx-foreground-color: #ffffff;");
                     } else {
                     	setText(item);
-                        if (item.contains("W")) {
-                        	tr.setStyle("-fx-background-color: #ffffcc");
-                        }else if (item.contains("U")) {
-                        	tr.setStyle("-fx-background-color: #66ccff");
-                        }else if (item.contains("B")) {
-                        	tr.setStyle("-fx-background-color: #b3b3b3");
-                        }else if (item.contains("R")) {
-                        	tr.setStyle("-fx-background-color: #ff6666");
-                        }else if (item.contains("G")) {
-                        	tr.setStyle("-fx-background-color: #85e085");
-                        } else {
-                        	tr.setStyle("-fx-background-color: #c2c2a3");
-                        }
+                        tr.setStyle(tr.getItem().getCSSStyle());
                     }
                 }
             };
@@ -104,6 +94,7 @@ public class CardListView extends DynamicScene{
         table.setRowFactory( tv -> {
 			TableRow<Card> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
+				
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
 					new CardDialog(row.getItem(), database).show();
 				}else if (event.getButton() == MouseButton.SECONDARY){
@@ -136,6 +127,7 @@ public class CardListView extends DynamicScene{
         
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
         	if (newSelection != null){
+        		
         		setPreview(newSelection);
         	}
         });
@@ -155,7 +147,6 @@ public class CardListView extends DynamicScene{
 	public void update() {
 		data.setAll(database.getMtgCards(filter.toSQL()));
 		table.setItems(data);
-		//setPreview(table.getSelectionModel().getSelectedItem());
 	}
 	
 	public void setPreview(Card c){

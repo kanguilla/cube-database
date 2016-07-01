@@ -36,11 +36,14 @@ public class CardDialog extends Stage{
 		System.out.println("Creating a dialog with " + card.name);
 		
 		try {
-			ResultSet rs = database.queryMtg("select setName from contents where cardName=\"" + card.name + "\";");
+			ResultSet rs = database.queryMtg("select setName, mciCode, number from contents join sets on contents.setName=sets.code where cardName=\"" + card.name + "\";");
 			while(rs.next()){
-			    String setCode = rs.getString(1);				
-				tabPane.getTabs().add(new CardTab(card, setCode));
+			    String setCode = rs.getString("setName");	
+			    String mciCode = rs.getString("mciCode");	
+			    String number = rs.getString("number");
+				tabPane.getTabs().add(new CardTab(card, setCode, mciCode, number));
 			}
+			rs.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -67,7 +70,6 @@ public class CardDialog extends Stage{
 		    }
 		});
 		
-		cb.setValue(database.getArchetypes().get(0));
 		cb.setTooltip(new Tooltip("(Optional) Select an archetype"));
 		cb.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> ov, Number value, Number newValue) {
@@ -92,7 +94,7 @@ public class CardDialog extends Stage{
 		
 		private String code;
 		
-		public CardTab(Card card, String setCode){
+		public CardTab(Card card, String setCode, String mciCode, String number){
 			super(setCode);
 			System.out.println("Tab created: " + card.name + " " + setCode);
 			
@@ -100,7 +102,7 @@ public class CardDialog extends Stage{
 			setClosable(false);
 			
 			GridPane g = new GridPane();
-			g.add(new ImageView(database.loadImage(card, setCode)), 0, 0);
+			g.add(new ImageView(database.loadImage(mciCode, number)), 0, 0);
 			setContent(g);
 		}
 	}

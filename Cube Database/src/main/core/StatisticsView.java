@@ -15,20 +15,34 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
 public class StatisticsView extends DynamicScene{
 	
+	Filter filter = new Filter("");
+	Database db;
+	PieChart setChart = new PieChart();
 	
 	public StatisticsView(Database db) {
 		super(new Group());
-		
+		this.db = db;
 		TabPane tabPane = new TabPane();
 		
+		filter.setSelection("select setCode, COUNT(*) as 'num' from cards where name like \"%\" ");
+    	filter.setOrdering("group by setCode order by num desc");
+		TextField searchField = new TextField ();
+        searchField.setPromptText("Search");
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+        	filter = new Filter(newValue);
+        	filter.setSelection("select setCode, COUNT(*) as 'num' from cards where name like \"%\" ");
+        	filter.setOrdering("group by setCode order by num desc");
+        	update();
+        });
+		
 		Tab setTab = new Tab("Set Distribution");
-		PieChart setChart = new PieChart();
 		ArrayList<PieChart.Data> data = new ArrayList<PieChart.Data>();
-		ResultSet rs = db.queryCube("select setCode, COUNT(*) as 'num' from cards group by setCode order by num desc;");
+		ResultSet rs = db.queryCube(filter.toSQL());
 		try {
 			while (rs.next()){
 				data.add(new PieChart.Data(rs.getString("setCode"), rs.getInt("num")));
@@ -50,7 +64,7 @@ public class StatisticsView extends DynamicScene{
 		
 		final VBox vbox = new VBox();
         vbox.setSpacing(5);
-        vbox.getChildren().addAll(tabPane);
+        vbox.getChildren().addAll(searchField, tabPane);
  
         ((Group) getRoot()).getChildren().addAll(vbox);
 	}
@@ -59,6 +73,15 @@ public class StatisticsView extends DynamicScene{
 	
 	@Override
 	public void update() {
-		
+		ArrayList<PieChart.Data> data = new ArrayList<PieChart.Data>();
+		ResultSet rs = db.queryCube(filter.toSQL());
+		try {
+			while (rs.next()){
+				data.add(new PieChart.Data(rs.getString("setCode"), rs.getInt("num")));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		setChart.setData(FXCollections.observableArrayList(data));
 	}
 }

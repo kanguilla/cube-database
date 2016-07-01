@@ -21,7 +21,7 @@ public class Database {
 	private Statement cubeStatement, mtgStatement;
 	private ViewController vc;
 	
-	private HashMap<Map.Entry<Card, String>, Image> imageCache = new HashMap<Map.Entry<Card, String>, Image>();
+	private HashMap<String, Image> imageCache = new HashMap<String, Image>();
 	
 	
 	public Database(ViewController vc) {
@@ -44,7 +44,10 @@ public class Database {
 		try {
 			ResultSet rs = cubeStatement.executeQuery(sql);
 			while (rs.next()) {
-				Card card = getMtgCards("select * from cards where name=\"" + rs.getString("name") + "\";").get(0);
+				Card card = new Card(rs.getString("name"), rs.getString("manaCost"), rs.getString("cmc"),
+						rs.getString("colors"), rs.getString("colorIdentity"), rs.getString("types"),
+						rs.getString("subtypes"), rs.getString("power"), rs.getString("toughness"),
+						rs.getString("text"), rs.getString("layout"));
 				CardEntry cardEntry = new CardEntry(card, rs.getString("setCode"), rs.getInt("quantity"));
 				cards.add(cardEntry);
 			}
@@ -57,10 +60,35 @@ public class Database {
 
 	public boolean addToCube(Card card, String setCode, int num) {
 		try {
-			PreparedStatement ps = cube.prepareStatement("insert or ignore into cards (name, setCode, quantity) values (?, ?, ?);");
+			
+//			+ "name varchar(50),"
+//					+ "manaCost varchar(10),"
+//					+ "cmc varchar(10),"
+//					+ "colors varchar(10),"
+//					+ "colorIdentity varchar(10),"
+//					+ "types varchar(50),"
+//					+ "subtypes varchar(50),"
+//					+ "power varchar (3),"
+//					+ "toughness varchar (3),"
+//					+ "text varchar (300),"
+//					+ "layout varchar (20),"
+//					+ "setCode varchar (10),"
+//					+ "quantity int,"
+			
+			PreparedStatement ps = cube.prepareStatement("insert or ignore into cards values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 			ps.setString(1, card.name);
-			ps.setString(2, setCode);
-			ps.setInt(3, num);
+			ps.setString(2, card.manaCost);
+			ps.setString(3,  card.cmc);
+			ps.setString(4, String.join(",",card.colors));
+			ps.setString(5, String.join(",",card.colorIdentity));
+			ps.setString(6, String.join(",", card.types));
+			ps.setString(7, String.join(",", card.subtypes));
+			ps.setString(8, card.power);
+			ps.setString(9, card.toughness);
+			ps.setString(10, card.text);
+			ps.setString(11, card.layout);
+			ps.setString(12, setCode);
+			ps.setInt(13, num);
 			ps.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -248,41 +276,38 @@ public class Database {
 	
 	
 	public Image loadImage(Card card){
-		try {
-			ResultSet rs = queryMtg("select mciCode, number from contents join sets on sets.code=contents.setName where cardName=\"" + card.name + "\";");
-			return loadImage(rs.getString("mciCode"), rs.getString("number"));
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
+		return loadImage(card, getMostRecentSet(card));
 	}
 	
 	public Image loadImage(Card card, String setCode){
-		
-		if (imageCache.containsKey(new Map.Entry()){
-			
-		}
-		
-		
+		System.out.println("Attempting image load: " + card.name + " from " + setCode);
 		try {
-			
 			ResultSet rs = queryMtg("select mciCode, number from contents join sets on sets.code=contents.setName where cardName=\"" + card.name + "\" and code=\""+ setCode + "\";");
-			System.out.println("Loading image: " + card.name + " from " + rs.getString("mciCode"));
 			String imageUrl = "http://magiccards.info/scans/en/" +rs.getString("mciCode")+ "/" + rs.getString("number") + ".jpg";
-			try {
-				URLConnection hc = new URL(imageUrl).openConnection();
-				hc.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36");
-				hc.connect();
-				return new Image(hc.getInputStream());
-			} catch (IOException e) {
-				return null;
+			rs.close();
+			if (imageCache.containsKey(imageUrl)){
+				System.out.println("  Image found in cache.");
+				return imageCache.get(imageUrl);
+			}else{	
+				System.out.println("  No image found. Fetching...");
+				try {
+					URLConnection hc = new URL(imageUrl).openConnection();
+					hc.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36");
+					hc.connect();
+					Image i = new Image(hc.getInputStream());
+					imageCache.put(imageUrl, i);
+					System.out.println("  " + card.name + " was loaded.");
+					return i;
+				} catch (IOException e) {
+					System.out.println("  Fetching image failed.");
+					return null;
+				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("  Card does not exist.");
 			return null;
 		}
 	}
-	
 	public Image loadImage(String mciCode, String number){
 		String imageUrl = "http://magiccards.info/scans/en/" +mciCode+ "/" + number + ".jpg";
 		URLConnection hc;
@@ -296,7 +321,6 @@ public class Database {
 			return null;
 		}
 	}
-
 	public boolean setSource(String string) {
 		try {
 			cube = DriverManager.getConnection("jdbc:sqlite:"+string+".db");

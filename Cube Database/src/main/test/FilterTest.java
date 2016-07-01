@@ -1,12 +1,9 @@
 package main.test;
 
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
-
-import main.core.Filter;
+import main.core.Filter2;
 
 public class FilterTest {
-	public static void main(String args[]){
-		String s = "t:creature cmc=9";
-		System.out.println("   " + s + "\n-> " + Filter.toSQL(s));
+	public static void main(String[] args){
+		Filter2 f = new Filter2("t:creature and r:rare");
 	}
 }
