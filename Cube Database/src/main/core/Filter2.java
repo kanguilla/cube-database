@@ -5,39 +5,71 @@ import java.util.Arrays;
 
 public class Filter2 {
 	
-	Node root;
 	
+	public ArrayList<String> nodes = new ArrayList<String>();
 	
 	String ordering = "";
 	String selection = "select * from cards where name like \"%\" ";
 	
-	public Filter2 (String proto){
-		String[] args = proto.split(" ");
-		
-		for (String arg : args){
-			System.out.print(toSQL(arg));
-		}
+	public Filter2 (String proto){	
+		parse(proto);
 	}
 
 	ArrayList<String> names = new ArrayList<String>();
 	ArrayList<String> types = new ArrayList<String>();
 
+	public void parse2(String e){
+		for (String s : e.split("\\(")){
+			System.out.println(s);
+		}
+	}
+	
+	public void parse(String e){
+		System.out.println("Parsing: " + e);
+		// t:creature (r:rare or r:mythic)
+		String s = e;
+		ArrayList<String> elements = new ArrayList<String>();
+		String sub = "";
+		
+		while (s.length() > 0){
+			//System.out.println("Looking at the first character: " + s.charAt(0));
+			char c = s.charAt(0);
+			if (c == '('){
+				elements.add(sub);
+				parse(s.substring(1));
+				break;
+			}else if (c == ')'){
+				elements.add(sub);
+				parse(s.substring(1));
+				break;
+			}else{
+				sub += c;
+			}
+			s = s.substring(1);
+		}
+		
+		for (String k : elements){
+			nodes.add(k);
+			//nodes.addAll(Arrays.asList(k.split(" ")));
+		}
+	}
+	
+	
 	public String toSQL(String e){
-		int i = 0;
-		while (e.charAt(i) == '('){
-			i++;
+		int leftBraces = 0;
+		while (e.charAt(leftBraces) == '('){
+			leftBraces++;
 			e = e.substring(1);
 		}
-		int k = e.length() - 1;
-		int j = e.length();
-		while (e.charAt(k) == ')'){
-			k--;
+		int rightBraces = 0;
+		int j = e.length() - 1;
+		while (e.charAt(j) == ')'){
+			j--;
+			rightBraces++;
 			e = e.substring(0, e.length()-1);
 		}
-		k = j - 1 - k;
 		
 		//determine the query type:
-		
 		if(e.equalsIgnoreCase("and") | e.equalsIgnoreCase("or")){
 			return e + " ";
 		}
@@ -58,11 +90,11 @@ public class Filter2 {
 		}
 		
 		String out = "";
-		for (int c = 0; c < i; c++){
+		for (int c = 0; c < leftBraces; c++){
 			out += "(";
 		}
 		out += e;
-		for (int c = 0; c < k; c++){
+		for (int c = 0; c < rightBraces; c++){
 			out += ")";
 		}
 		
