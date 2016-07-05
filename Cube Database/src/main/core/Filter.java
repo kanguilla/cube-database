@@ -6,91 +6,193 @@ import java.util.Arrays;
 public class Filter {
 	
 	
-	
-	
-	String ordering = "";
-	String selection = "select * from cards where name like \"%\" ";
+	private ArrayList<Object> elements = new ArrayList<Object>();
+
+	String selection = "select * from cards where name like '%' ";
+	String ordering = " ";
 	
 	public Filter (String proto){
-		String[] args = proto.split(" ");
-		
-		for (String arg : args){
-			String[] s = arg.split(":");
-			if (s.length == 1){
-				//This is a name
-				if (!s[0].equals(" ")){
-					names.add(s[0]);
+		//System.out.println("CNS FILTER");
+		parse(proto);
+	}
+	
+	public void print(){
+		for (int i = 0; i < elements.size(); i++){
+			System.out.println(i + ": " + elements.get(i).getClass().getName() + "   " + elements.get(i));
+		}
+	}
+	
+	public void parse(String e){
+		if (e.trim().length() == 0){
+			return;
+		}
+		//System.out.println("Parsing : " + e);
+		ArrayList<Object> out = new ArrayList<Object>();
+		String sub = "";
+		int start = 0;
+		boolean quote = false;
+		boolean para = false;
+		for (char c : e.toCharArray()){
+			//System.out.println("Looking at the first character: " + s.charAt(0));
+			if (c == ' ' && start == 0 && !quote){
+				if(!para){
+					out.add(sub);
+				}else{
+					out.add(new Filter(sub.substring(1, sub.length()-1)));
+					para = false;
 				}
-				continue;
+				sub = "";
+			}else if (c == '"'){
+				quote = !quote;
+			}else if (c == '('){
+				start++;
+				if (start == 1){
+					out.add(sub);
+					sub = "";
+				}
+			}else if (c == ')'){
+				start--;
+				if (start == 0){
+					para = true;
+				}
 			}
-			if (s[0].equalsIgnoreCase("t")){
-				//This is a type
-				types.add(s[1]);
+			sub += c;
+		}
+		if(!para){
+			out.add(sub);
+		}else{
+			out.add(new Filter(sub.substring(1, sub.length()-1)));
+			para = false;
+		}
+		ArrayList<Object> out2 = new ArrayList<Object>();
+		for (Object s : out){
+			if (s instanceof String){
+				if (((String) s).trim().length() > 0){
+					out2.add(((String) s).trim());
+				}
+			}else{
+				out2.add(s);
 			}
 		}
+		out2 = conjugate(out2);
+		elements = out2;
 	}
 	
-	public Filter() {
-	}
-
-	ArrayList<String> names = new ArrayList<String>();
-	ArrayList<String> types = new ArrayList<String>();
 	
-	public boolean check(Card c){
-		
-		for (String name : names){
-			if (!c.name.contains(name)){
-				return false;
+	
+	public ArrayList<Object> conjugate(ArrayList<Object> a){
+		if (a.size() <= 1){
+			return a;
+		}
+		boolean conj = true;
+		for (int i = 0; i < a.size(); i++){
+			if (a.get(i) instanceof String){
+				String s = (String) a.get(i);
+				if (s.equalsIgnoreCase("and") || s.equalsIgnoreCase("or")){
+					conj = true;
+				}else{
+					
+					if (conj){
+						conj = false;
+					}else{
+						conj = true;
+						a.add(i, "and");
+					}
+				}
 			}
 		}
-		
-		
-		for (String type : c.types){
-			if (!Arrays.asList(types).contains(type)){
-				return false;
-			}
-		}
-		
-		
-		return true;
+		return a;
 	}
-
 	
 	public String toSQL(){
-		String s = selection;
-		
-		
-		for (int i = 0; i < names.size(); i++){
-			s += "and name like \"%" + names.get(i) + "%\" ";
+		String sql = selection;
+		if (!elements.isEmpty()){
+			sql += " and ";
 		}
-		
-		for (int i = 0; i < types.size(); i++){
-			s += "and (types like \"%" + types.get(i) + "%\" or subtypes like \"%" + types.get(i) + "%\") ";
+		for (Object o : elements){
+			if (o instanceof String){	
+				String s = ((String) o);
+				
+				if(s.equalsIgnoreCase("and") || s.equalsIgnoreCase("or")){
+					sql += " " + s;
+					continue;
+				}
+				
+				if (s.startsWith("t:")){
+					String t = s.split(":")[1];
+					sql += " (UPPER(types) like UPPER('%" + t + "%') or UPPER(subtypes) like UPPER('%" + t + "%'))";
+					continue;
+				}
+				
+				if (s.startsWith("c!")){
+					String t = s.split("!")[1];
+					
+					if(t.endsWith("m")){
+						t = t.substring(0, t.length()-1);
+						sql += " colors = '" + t.toUpperCase() + "'";
+					}else{
+						String sc = "%" + String.join("%", t.split("")) + "%";
+						sql += " (";
+						
+						for (String c : t.split("")){
+							sql += " colors = '" + c.toUpperCase()+ "' or ";
+						}
+						
+						sql += " name like '.') ";
+						
+					}
+					
+					continue;
+				}
+				
+				if (s.startsWith("c:")){
+					String t = s.split(":")[1];
+					
+					if(t.endsWith("m")){
+						t = t.substring(0, t.length()-1);
+						String sc = "%" + String.join("%", t.split("")) + "%";
+						sql += " colors like '" + sc + "'";
+					}else{
+						sql += " (";
+						
+						for (String c : t.split("")){
+							sql += " colors like '%" + c.toUpperCase()+ "%' or ";
+						}
+						
+						sql += " name like '.') ";
+						
+					}
+					continue;
+				}
+				
+				if (s.startsWith("is:")){
+					String t = s.split(":")[1];
+					switch(t){
+					case "new":
+						sql += " frame='new'";
+					}
+					continue;
+				}
+				
+				if (s.startsWith("\"")){
+					sql += " name like '%" + s.substring(1, s.length()-1) + "%' ";
+					continue;
+				}
+				
+				sql += " name like '%" + s + "%' ";
+				
+			}else if (o instanceof Filter){
+				Filter f = (Filter) o;
+			}
 		}
-		s += " " + ordering;
-		s += ";";
-		System.out.println(s);
-		return s;
-	}
-
-
-	public void setOrdering(String string) {
-		ordering = string;
+		return sql + ordering + ";";
 	}
 
 	public void setSelection(String string) {
 		selection = string;
 	}
-	
-	public class Node{
-		boolean type;
-		Node left;
-		Node right;
-		public Node(boolean type, Node left, Node right){
-			this.type = type;
-			this.left = left;
-			this.right = right;
-		}
+
+	public void setOrdering(String string) {
+		ordering = string;
 	}
-	
 }

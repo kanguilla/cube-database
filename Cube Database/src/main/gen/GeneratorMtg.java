@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Scanner;
 
 public class GeneratorMtg {
 
@@ -36,7 +37,8 @@ public class GeneratorMtg {
 					+ "power varchar (3),"
 					+ "toughness varchar (3),"
 					+ "text varchar (300),"
-					+ "layout varchar (20));");
+					+ "layout varchar (20),"
+					+ "frame varchar (20));");
 			System.out.println("Created card table ("+ (System.currentTimeMillis() - time)/1000 +")");
 			
 			time = System.currentTimeMillis();
@@ -78,24 +80,54 @@ public class GeneratorMtg {
 			System.out.println("Finished sets ("+ (System.currentTimeMillis() - time)/1000 +")");
 
 			//add the cards
-			prep = database.prepareStatement("insert or ignore into cards values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prep = database.prepareStatement("insert or ignore into cards values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			PreparedStatement prep2 = database.prepareStatement("insert into contents values (?, ?, ?, ?, ?, ?, ?);");
 			database.setAutoCommit(false);
 			time = System.currentTimeMillis();
 			for (MtgSet set : mtg.data.values()){
 				int counter = 0;
+				
+				//System.out.println("Type 'new' or 'old' for " + set.name + " :");
+				//Scanner sc = new Scanner(System.in);
+				//String style = sc.nextLine();
+				
 				for (Card card : set.cards){
+					
+					String colors = "";
+					if(card.colors != null){
+						for (String s : card.colors){
+							switch(s){
+							case "White":
+								colors += "W";
+								break;
+							case "Blue":
+								colors += "U";
+								break;
+							case "Black":
+								colors += "B";
+								break;
+							case "Red":
+								colors += "R";
+								break;
+							case "Green":
+								colors += "G";
+								break;
+							}
+						}
+					}
+					
 					prep.setString(1, card.name);
 					prep.setString(2, card.manaCost);
 					prep.setString(3, String.valueOf(card.cmc));
-					prep.setString(4, (card.colors != null) ? String.join(",", card.colors) : "");
+					prep.setString(4, (card.colors != null) ? colors : "");
 					prep.setString(5, (card.colorIdentity != null) ? String.join(",", card.colorIdentity) : "");
 					prep.setString(6, (card.types != null) ? String.join(",", card.types) : "");
 					prep.setString(7, (card.subtypes != null) ? String.join(",", card.subtypes) : "");
 					prep.setString(8, card.power);
 					prep.setString(9, card.toughness);
 					prep.setString(10, card.text);
-					prep.setString(11, card.layout);		
+					prep.setString(11, card.layout);	
+					prep.setString(12, "new");	
 					prep.addBatch();
 					
 					counter++;

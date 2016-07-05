@@ -30,13 +30,13 @@ public class StatisticsView extends DynamicScene{
 		TabPane tabPane = new TabPane();
 		
 		filter.setSelection("select setCode, COUNT(*) as 'num' from cards where name like \"%\" ");
-    	filter.setOrdering("group by setCode order by num desc");
+    	filter.setOrdering(" group by setCode order by num desc");
 		TextField searchField = new TextField ();
         searchField.setPromptText("Search");
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
         	filter = new Filter(newValue);
         	filter.setSelection("select setCode, COUNT(*) as 'num' from cards where name like \"%\" ");
-        	filter.setOrdering("group by setCode order by num desc");
+        	filter.setOrdering(" group by setCode order by num desc");
         	update();
         });
 		
