@@ -40,9 +40,8 @@ public class CardListView extends DynamicScene{
 	private TabPane tabPane = new TabPane();
 	private TableView<Card> table = new TableView<Card>();
 	private FlowView flow = new FlowView();
-	
+	private Thread updateThread;
 	private ImageView previewPane;
-	
 	
 	public CardListView(Database dm){
     	super(new Group());
@@ -58,6 +57,15 @@ public class CardListView extends DynamicScene{
         searchField.setPromptText("Search");
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
         	filter = new Filter(newValue);
+        	Thread updateThread = new Thread(){
+        		public void run() {
+        			long t = System.currentTimeMillis();
+        			while (System.currentTimeMillis() < t + 2000){
+        			}
+        	        System.out.println("Hello from a thread!");
+        	    }
+        	};
+        	updateThread.start();
         	update();
         });
                
@@ -161,7 +169,7 @@ public class CardListView extends DynamicScene{
         tabPane.getTabs().add(imageTab);
 
         ArrayList<Image> images = new ArrayList<Image>();
-        for (int i = 0; i < 20; i++){
+        for (int i = 0; i < 4; i++){
         	images.add(database.loadImage(data.get(i)));
         }
         flow.setContent(images);
@@ -181,6 +189,11 @@ public class CardListView extends DynamicScene{
 		data.setAll(database.getMtgCards(filter.toSQL()));
 		table.setItems(data);
 		table.getSelectionModel().select(0);
+		ArrayList<Image> images = new ArrayList<Image>();
+		for (int i = 0; i < 4; i++) {
+			images.add(database.loadImage(data.get(i)));
+		}
+		flow.setContent(images);
 	}
 	
 	public void setPreview(Card c){

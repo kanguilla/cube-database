@@ -14,6 +14,7 @@ public class FlowView extends FlowPane{
 	}
 	
 	public void setContent(ArrayList<Image> data){
+		this.getChildren().clear();
 		this.data = data;
 		for (Image i : data){
 			this.getChildren().add(new ImageNode(i));
@@ -27,6 +28,8 @@ public class FlowView extends FlowPane{
 			this.setImage(i);
 			this.setFitWidth(200);
 			this.setPreserveRatio(true);
+			this.setSmooth(true);
+			this.setCache(true);  
 		}
 	}
 }
