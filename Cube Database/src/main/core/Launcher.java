@@ -15,9 +15,9 @@ public class Launcher extends Application{
     	ViewController views = new ViewController();
     	dc = new Database(views);
     	views.addView(new CardListView(dc));
-        views.addView(new CubeListView(dc));
-        views.addView(new ArchListView(dc));
-        views.addView(new StatisticsView(dc));
+        //views.addView(new CubeListView(dc));
+        //views.addView(new ArchListView(dc));
+        //views.addView(new StatisticsView(dc));
         views.show();
         views.updateAll();
     }

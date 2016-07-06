@@ -42,10 +42,10 @@ public class StatisticsView extends DynamicScene{
 		
 		Tab setTab = new Tab("Set Distribution");
 		ArrayList<PieChart.Data> data = new ArrayList<PieChart.Data>();
-		ResultSet rs = db.queryCube(filter.toSQL());
+		ResultSet rs = db.queryCube("select * from cards;");
 		try {
 			while (rs.next()){
-				data.add(new PieChart.Data(rs.getString("setCode"), rs.getInt("num")));
+				data.add(new PieChart.Data(rs.getString("setCode"), rs.getInt("quantity")));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -74,10 +74,10 @@ public class StatisticsView extends DynamicScene{
 	@Override
 	public void update() {
 		ArrayList<PieChart.Data> data = new ArrayList<PieChart.Data>();
-		ResultSet rs = db.queryCube(filter.toSQL());
+		ResultSet rs = db.queryCube("select * from cards;");
 		try {
 			while (rs.next()){
-				data.add(new PieChart.Data(rs.getString("setCode"), rs.getInt("num")));
+				data.add(new PieChart.Data(rs.getString("setCode"), rs.getInt("quantity")));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

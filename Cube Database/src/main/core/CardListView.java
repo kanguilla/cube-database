@@ -1,4 +1,7 @@
 package main.core;
+import java.util.ArrayList;
+import java.util.Random;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,26 +12,37 @@ import javafx.scene.Group;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 
 public class CardListView extends DynamicScene{
 	
-	Database database;
-	ObservableList<Card> data = FXCollections.observableArrayList();
 	
-	Label title;
-	TableView<Card> table = new TableView<Card>();
-	ImageView previewPane;
-	Filter filter = new Filter("");
+	//Data members
+	private Database database;
+	private ObservableList<Card> data = FXCollections.observableArrayList();
+	private Filter filter = new Filter("");
+	
+	//UI Members
+	private Label title;
+	private TabPane tabPane = new TabPane();
+	private TableView<Card> table = new TableView<Card>();
+	private FlowView flow = new FlowView();
+	
+	private ImageView previewPane;
+	
 	
 	public CardListView(Database dm){
     	super(new Group());
@@ -37,7 +51,7 @@ public class CardListView extends DynamicScene{
 
     	
     	previewPane = new ImageView();
-        Label title = new Label("Cards");
+        title = new Label("Cards");
         title.setFont(new Font("Arial", 20));
         
         TextField searchField = new TextField ();
@@ -46,7 +60,7 @@ public class CardListView extends DynamicScene{
         	filter = new Filter(newValue);
         	update();
         });
-        
+               
         table.setEditable(false);
         
         TableColumn<Card, String> nameCol = new TableColumn<Card, String>("Name");
@@ -127,17 +141,36 @@ public class CardListView extends DynamicScene{
         
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
         	if (newSelection != null){
-        		
         		setPreview(newSelection);
         	}
         });
+        
+
+        
+        Tab listTab = new Tab("List");
+        listTab.setClosable(false);
+        listTab.setContent(table);
+        tabPane.getTabs().add(listTab);
+        Tab flowTab = new Tab("Images");
+        flowTab.setClosable(false);
+        flowTab.setContent(flow);
+        tabPane.getTabs().add(flowTab);
+        Tab imageTab = new Tab("Preview");
+        imageTab.setClosable(false);
+        imageTab.setContent(previewPane);
+        tabPane.getTabs().add(imageTab);
+
+        ArrayList<Image> images = new ArrayList<Image>();
+        for (int i = 0; i < 20; i++){
+        	images.add(database.loadImage(data.get(i)));
+        }
+        flow.setContent(images);
         
         final GridPane layout = new GridPane();
         layout.setPadding(new Insets(10, 10, 10, 10));
         layout.add(title, 0, 0);
         layout.add(searchField, 0, 1);
-        layout.add(table, 0, 2);
-        layout.add(previewPane, 1, 2);
+        layout.add(tabPane, 0, 2);
         ((Group) getRoot()).getChildren().addAll(layout);
         
         table.getSelectionModel().select(0);
@@ -147,6 +180,7 @@ public class CardListView extends DynamicScene{
 	public void update() {
 		data.setAll(database.getMtgCards(filter.toSQL()));
 		table.setItems(data);
+		table.getSelectionModel().select(0);
 	}
 	
 	public void setPreview(Card c){

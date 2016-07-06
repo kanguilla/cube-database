@@ -210,8 +210,8 @@ public class Database {
 	}
 
 	public String getMostRecentSet(Card item) {
-		ResultSet rs = queryMtg("select setName from contents where cardName=\"" +item.name+ "\";");
 		try {
+			ResultSet rs = queryMtg("select setName from contents where cardName='"+ item.name.replace("'", "''")+ "';");
 			return rs.getString("setName");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -282,7 +282,7 @@ public class Database {
 	public Image loadImage(Card card, String setCode){
 		System.out.println("Attempting image load: " + card.name + " from " + setCode);
 		try {
-			ResultSet rs = queryMtg("select mciCode, number from contents join sets on sets.code=contents.setName where cardName=\"" + card.name + "\" and code=\""+ setCode + "\";");
+			ResultSet rs = queryMtg("select mciCode, number from contents join sets on sets.code=contents.setName where cardName='" + card.name.replace("'", "''") + "' and code='"+ setCode + "';");
 			String imageUrl = "http://magiccards.info/scans/en/" +rs.getString("mciCode")+ "/" + rs.getString("number") + ".jpg";
 			rs.close();
 			if (imageCache.containsKey(imageUrl)){

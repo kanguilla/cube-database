@@ -8,7 +8,7 @@ public class Filter {
 	
 	private ArrayList<Object> elements = new ArrayList<Object>();
 
-	String selection = "select * from cards where name like '%' ";
+	String selection = "select * from cards where name in (select name from cards join contents on name=cardName where name like '%' ";
 	String ordering = " ";
 	
 	public Filter (String proto){
@@ -165,6 +165,20 @@ public class Filter {
 					continue;
 				}
 				
+				/*
+				 * select * from cards as a where exists (select name from cards join contents as b on name=cardName  where name="Naturalize" and a.name = b.cardName order by name asc);
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 */
+				
+				
+				if (s.startsWith("r:")){
+					
+				}
+				
 				if (s.startsWith("is:")){
 					String t = s.split(":")[1];
 					switch(t){
@@ -185,7 +199,7 @@ public class Filter {
 				Filter f = (Filter) o;
 			}
 		}
-		return sql + ordering + ";";
+		return sql + " ) " + ordering + ";";
 	}
 
 	public void setSelection(String string) {
