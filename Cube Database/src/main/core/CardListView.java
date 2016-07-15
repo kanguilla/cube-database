@@ -1,14 +1,18 @@
 package main.core;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -20,11 +24,11 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 
 public class CardListView extends DynamicScene{
@@ -39,15 +43,27 @@ public class CardListView extends DynamicScene{
 	private Label title;
 	private TabPane tabPane = new TabPane();
 	private TableView<Card> table = new TableView<Card>();
-	private FlowView flow = new FlowView();
-	private Thread updateThread;
+	private FlowView flow = new FlowView(this);
+	private Timer timer;
 	private ImageView previewPane;
+	private ChoiceBox<String> sortBox;
 	
 	public CardListView(Database dm){
     	super(new Group());
     	this.database = dm;
     	data.addAll(database.getMtgCards(filter.toSQL()));
 
+    	sortBox =  new ChoiceBox<String>(FXCollections.observableArrayList("Name", "Color"));
+    	sortBox.getSelectionModel().select(0);
+    	sortBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				System.out.println(sortBox.getItems().get((Integer) newValue));
+				update();
+			}
+    		
+    	});
     	
     	previewPane = new ImageView();
         title = new Label("Cards");
@@ -55,18 +71,22 @@ public class CardListView extends DynamicScene{
         
         TextField searchField = new TextField ();
         searchField.setPromptText("Search");
+        
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
         	filter = new Filter(newValue);
-        	Thread updateThread = new Thread(){
-        		public void run() {
-        			long t = System.currentTimeMillis();
-        			while (System.currentTimeMillis() < t + 2000){
-        			}
-        	        System.out.println("Hello from a thread!");
-        	    }
-        	};
-        	updateThread.start();
-        	update();
+        	if (timer != null){
+        		timer.cancel();
+        	}
+        	timer = new Timer();
+        	timer.schedule(new TimerTask() {
+  			  @Override
+  			public void run() {
+  			    Platform.runLater(new Runnable() {
+  			       public void run() {
+  			          update();
+  			      }
+  			    });
+  			  }}, 1000);
         });
                
         table.setEditable(false);
@@ -168,17 +188,19 @@ public class CardListView extends DynamicScene{
         imageTab.setContent(previewPane);
         tabPane.getTabs().add(imageTab);
 
-        ArrayList<Image> images = new ArrayList<Image>();
-        for (int i = 0; i < 4; i++){
-        	images.add(database.loadImage(data.get(i)));
-        }
-        flow.setContent(images);
+        flow.update();
         
-        final GridPane layout = new GridPane();
+        GridPane layout = new GridPane();
+        ColumnConstraints cc = new ColumnConstraints();
+        cc.setFillWidth(true);
+        cc.setHgrow(Priority.ALWAYS);
+        layout.getColumnConstraints().addAll(cc, cc);
         layout.setPadding(new Insets(10, 10, 10, 10));
         layout.add(title, 0, 0);
-        layout.add(searchField, 0, 1);
-        layout.add(tabPane, 0, 2);
+        layout.add(searchField, 0, 1, 1, 1);
+        layout.add(sortBox, 1, 1, 1, 1);
+        layout.add(tabPane, 0, 2, 2, 1);
+        layout.siz
         ((Group) getRoot()).getChildren().addAll(layout);
         
         table.getSelectionModel().select(0);
@@ -186,17 +208,30 @@ public class CardListView extends DynamicScene{
 
 	@Override
 	public void update() {
+		
+		switch(sortBox.getItems().get(sortBox.getSelectionModel().getSelectedIndex())){
+		case "Name":
+			filter.ordering = " order by name asc ";
+			break;
+		case "Color":
+			filter.ordering = " order by colors asc ";
+			break;
+		}
+		
 		data.setAll(database.getMtgCards(filter.toSQL()));
 		table.setItems(data);
 		table.getSelectionModel().select(0);
-		ArrayList<Image> images = new ArrayList<Image>();
-		for (int i = 0; i < 4; i++) {
-			images.add(database.loadImage(data.get(i)));
-		}
-		flow.setContent(images);
+		flow.update();
 	}
 	
 	public void setPreview(Card c){
 		previewPane.imageProperty().set(database.loadImage(c));
+	}
+
+	public Card[] getCards() {
+		return data.toArray(new Card[]{});
+	}
+	public Database getDatabase(){
+		return database;
 	}
 }

@@ -290,18 +290,7 @@ public class Database {
 				return imageCache.get(imageUrl);
 			}else{	
 				System.out.println("  No image found. Fetching...");
-				try {
-					URLConnection hc = new URL(imageUrl).openConnection();
-					hc.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36");
-					hc.connect();
-					Image i = new Image(hc.getInputStream());
-					imageCache.put(imageUrl, i);
-					System.out.println("  " + card.name + " was loaded.");
-					return i;
-				} catch (IOException e) {
-					System.out.println("  Fetching image failed.");
-					return null;
-				}
+				return getImageFromURL(imageUrl);
 			}
 		} catch (SQLException e) {
 			System.out.println("  Card does not exist.");
@@ -309,7 +298,18 @@ public class Database {
 		}
 	}
 	public Image loadImage(String mciCode, String number){
-		String imageUrl = "http://magiccards.info/scans/en/" +mciCode+ "/" + number + ".jpg";
+		
+		Thread thread = new Thread(){
+			@Override
+			public void run(){
+				System.out.println("This is a thread");
+				String imageUrl = "http://magiccards.info/scans/en/" +mciCode+ "/" + number + ".jpg";
+			}
+		};
+		//thread.start();
+		return getImageFromURL("http://magiccards.info/scans/en/" +mciCode+ "/" + number + ".jpg");
+	}
+	public Image getImageFromURL(String imageUrl){
 		URLConnection hc;
 		try {
 			hc = new URL(imageUrl).openConnection();
@@ -321,6 +321,7 @@ public class Database {
 			return null;
 		}
 	}
+	
 	public boolean setSource(String string) {
 		try {
 			cube = DriverManager.getConnection("jdbc:sqlite:"+string+".db");

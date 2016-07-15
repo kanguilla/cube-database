@@ -164,19 +164,18 @@ public class Filter {
 					}
 					continue;
 				}
-				
-				/*
-				 * select * from cards as a where exists (select name from cards join contents as b on name=cardName  where name="Naturalize" and a.name = b.cardName order by name asc);
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 */
-				
-				
+						
 				if (s.startsWith("r:")){
-					
+					String t = s.split(":")[1];
+					sql += " UPPER(rarity)=UPPER('"+t+"') ";
+					continue;
+				}
+				
+				if (s.startsWith("o:")){
+					String t = s.split(":")[1];
+					t = t.replace("\"", " ").trim();
+					sql += " UPPER(text) like UPPER('%" + t + "%') ";
+					continue;
 				}
 				
 				if (s.startsWith("is:")){
