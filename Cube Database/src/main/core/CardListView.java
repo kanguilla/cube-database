@@ -1,4 +1,5 @@
 package main.core;
+import java.awt.Window;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -193,14 +194,12 @@ public class CardListView extends DynamicScene{
         GridPane layout = new GridPane();
         ColumnConstraints cc = new ColumnConstraints();
         cc.setFillWidth(true);
-        cc.setHgrow(Priority.ALWAYS);
-        layout.getColumnConstraints().addAll(cc, cc);
+        layout.getColumnConstraints().addAll(cc, cc, cc);
         layout.setPadding(new Insets(10, 10, 10, 10));
         layout.add(title, 0, 0);
         layout.add(searchField, 0, 1, 1, 1);
         layout.add(sortBox, 1, 1, 1, 1);
         layout.add(tabPane, 0, 2, 2, 1);
-        layout.siz
         ((Group) getRoot()).getChildren().addAll(layout);
         
         table.getSelectionModel().select(0);
